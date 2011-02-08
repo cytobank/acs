@@ -1,0 +1,81 @@
+<project name="Cytobank ACS Library" default="dist" basedir=".">
+  <!-- set global properties for this build --> 
+  <property name="app.version"         value="0.1-dev"/>
+
+  <property name="app.name"            value="cytobank-acs"/>
+  <property name="src.home"            value="${basedir}/src/main"/>
+  <property name="test.home"           value="${basedir}/src/test"/>
+  <property name="dist.home"           value="${basedir}/dist"/>
+  <property name="build.home"          value="${basedir}/build"/>
+  <property name="dist.home"           value="${basedir}/dist"/>
+  <property name="lib.dir"             value="${basedir}/lib"/>
+
+  <property name="compile.debug"       value="false"/>
+  <property name="compile.deprecation" value="true"/>
+  <property name="compile.optimize"    value="true"/>
+
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build.home}"/>
+  </target>
+
+
+  <path id="compile.classpath">
+
+    <!-- Include all JAR files that will be included in /WEB-INF/lib -->
+     <fileset dir="${lib.dir}">
+       <include name="*.jar"/>
+     </fileset>
+
+  </path>
+
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src.home}"
+          destdir="${build.home}"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}" >
+
+	<classpath refid="compile.classpath"/>
+    </javac>
+  	
+    <!-- Copy application resources -->
+    <copy todir="${build.home}">
+      <fileset dir="${src.home}" excludes="**/*.java"/>
+    </copy>
+
+  </target>
+
+  <target name="javadoc" depends="compile"
+   description="Create Javadoc API documentation">
+
+    <mkdir          dir="${dist.home}/docs/api"/>
+    <javadoc sourcepath="${src.home}"
+                destdir="${dist.home}/docs/api"
+           packagenames="*">
+      <classpath refid="compile.classpath"/>
+    </javadoc>
+
+  </target>
+
+
+  <target name="dist" depends="compile,javadoc"
+        description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist.home}/lib"/>
+
+    <jar jarfile="${dist.home}/lib/${app.name}-${app.version}.jar" basedir="${build.home}"/>
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build.home} and ${dist.home} directory trees -->
+    <delete dir="${build.home}"/>
+    <delete dir="${dist.home}"/>
+  </target>
+</project>

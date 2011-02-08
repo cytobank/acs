@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema 
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:toc="http://www.isac-net.org/std/ACS/1.0/toc/"
+  xmlns:sig="http://www.w3.org/2000/09/xmldsig#"
+  targetNamespace="http://www.isac-net.org/std/ACS/1.0/toc/" 
+  
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified" 
+  version="0.20100824">
+  
+  <import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd" />
+  
+  <annotation><appinfo>Table of Contents of ACS Containers</appinfo></annotation>
+
+  <element name="TOC" id="TOC" type="toc:TOC_Type"/>
+  
+  <complexType name="TOC_Type" id="TOC_Type">
+    <annotation><documentation xml:lang="en">
+      One ore more file descriptions, optionally followed by additional_info and digital signatures.
+      See W3C Recommendation, XML Signature Syntax and Processing (Second Edition) at http://www.w3.org/TR/xmldsig-core/ for more details.
+    </documentation></annotation>
+    <sequence>
+      <element name="file" type="toc:file_Type" minOccurs="1" maxOccurs="unbounded" id="file" />
+      <element name="additional_info" type="anyType" minOccurs="0" maxOccurs="unbounded" id="container_additional_info" />
+      <element name="signature" type="sig:SignatureType" minOccurs="0" maxOccurs="unbounded" id="signature" />
+    </sequence>
+    <attribute name="parent_toc" type="anyURI" use="optional" />
+  </complexType>
+  
+  <complexType name="file_Type" id="file_Type">
+    <annotation>
+      <documentation xml:lang="en">
+        All files listed in the Table of Contents share the file type.
+        - URI (required):
+        The Uniform Resource Identifier (URI, as defined by http://www.ietf.org/rfc/rfc3986.txt) is the only required attribute. 
+        For files that are required to interpret the contents of the ACS container, the URI shall be in the form of a Uniform Resource Locator (URL) 
+        that is based on one of the "file", "http", "https", or "ftp" schemes. The "file" scheme shall only be used to reference files within the container. 
+        In these cases, the container itself is understood as the local file system. The slash character shall be used to indicate the root of the container 
+        and to separate directories in the file path. File-based URLs referring to the "local" file system outside of the container 
+        (e.g., "file://C:\My Documents\FCS\file1.fcs") shall NOT be used in any case. Examples of conformant URLs: file:///data1.fcs, file:///sample2/a08.fcs
+        The "http", "https", or "ftp" schemes should be used to reference files outside of the container. It should be possible to dereference these URLs globally 
+        (i.e., localhost-based URLs shall NOT be used). 
+        URLs based on other than "file", "http", "https", or "ftp" schemes and URNs may only be used for files that are not required to interpret the 
+        contents of the ACS container, e.g., urn:issn:1552-4957.
+        - mimeType, optional:
+        The name of the format that the file is saved in. Usage of the Multipurpose Internet Mail Extensions (MIME) Media Type is recommended for the value 
+        of the format attribute if possible, See http://www.iana.org/assignments/media-types/. 
+        Examples: "application/vnd.isac.fcs", "application/dicom", "application/postscript", "application/msword", "application/pdf", 
+        "application/netCDF", "image/bmp", "image/gif", "image/jpeg", "image/jp2", "image/png", "image/svg+xml", "image/tiff".
+        "application/vnd.treestar.flowJo-ws+xml", "application/vnd.isac.gating-ml+xml"
+        - description (optional):
+        A free text description of the file.
+        - associated (optional):
+        The "associated" element may be used to provide references to information about the file stored in other files. Essentially, all metadata relations 
+        shall be provided using the "associated" element with the "with" and "associationType" required attributes.
+        - additional_info (optional):
+        The additional_info element may include additional information about the file in structured form.
+      </documentation>
+    </annotation>
+    <sequence minOccurs="0" maxOccurs="unbounded" id="file_Type_Contents">
+      <choice>
+        <element name="associated" type="toc:associationDetails_Type" id="associated" />
+        <element name="additional_info" type="anyType" id="file_additional_info" />
+      </choice>
+    </sequence>
+    <attribute name="URI" type="anyURI" use="required" id="URI" />
+    <attribute name="mimeType"  type="string" use="optional" id="mimeType" />
+    <attribute name="description" type="string" use="optional" id="description" />
+  </complexType>
+  
+  <complexType name="associationDetails_Type" id="associationDetails_Type">
+    <annotation>
+      <documentation>
+        Description of the type of an association. 
+        - with (required):
+        A URI [RFC-3986, http://www.ietf.org/rfc/rfc3986.txt] of the target resource (file) of the association. The URI shall follow the same rules as specified for 
+        the "file" element. In addition, a URI fragment identifier as defined by the general URI syntax [RFC-3986] may be used to reference part of a resource. 
+        A fragment identifier component is indicated by the presence of a number sign ('#') character and terminated by the end of the URI. 
+        For example, file:///gates/gating1.xml#gate1 references a specific gate within a Gating-ML file; file:///gates/gating1.xml#spillm references a specific 
+        spillover matrix within a Gating-ML file.
+        - associationType (required):
+        The type of the association.  If possible, one of the pre-defined association types should be used. 
+        If there is no suitable association type for your association in the ISAC registry, please submit a new association type to the 
+        ISAC Data Standards Task Force; see http://www.isac-net.org for contact details and the updated contents of the registry. 
+        See the specification PDF for the contents of the association types registry of as of the date of this document.
+      </documentation>
+    </annotation>
+    <attribute name="with" type="anyURI" use="required" id="with" />
+    <attribute name="relationship" type="string" use="required" id="relationship" />
+  </complexType>
+
+</schema>

@@ -39,7 +39,7 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 	 * A setup method to initialize the variable {@link AdditionalInfoElementWrapper#additionalInfos}
 	 * that also sets up the <code>AdditionalInfo</code> by parsing the xml, if available.
 	 */
-	public void setupAdditionalInfo() {
+	protected void setupAdditionalInfo() {
 		NodeList additionalInfoNodes = element.getElementsByTagName(Constants.ADDITIONAL_INFO_ELEMENT);
 
 		additionalInfos = new Vector<AdditionalInfo>();

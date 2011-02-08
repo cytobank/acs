@@ -88,7 +88,7 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 * or {@link FileResourceIdentifier#close} is called.
 	 * <p>
 	 * NOTE: The preferred method to create a <code>FileResourceIdentifier</code> is to use the 
-	 * {@link TableOfContents#createFileResource} method on an existing <code>TableOfContents</code>.
+	 * {@link TableOfContents#createFileResourceIdentifier} method on an existing <code>TableOfContents</code>.
 	 * <p>
 	 * This constructor sets <code>this.sourceInputStream</code> to the specified <code>sourceInputStream</code>
 	 * and will cause the <code>hasSourceInputStream()</code> method to return <code>true</code>, which will indicate
@@ -100,7 +100,7 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 * @param tableOfContents the <code>TableOfContents</code> instance that the created <code>FileResourceIdentifier</code> will be owned by 
 	 * @param sourceFileStream the <code>InputStream</code> pointing to the represented file of the created <code>FileResourceIdentifier</code>
 	 * @throws InvalidAssociationException if there is an invalid association exception
-	 * @see TableOfContents#createFileResource
+	 * @see TableOfContents#createFileResourceIdentifier
 	 * @see FileResourceIdentifier#hasSourceInputStream
 	 */
 	public FileResourceIdentifier(TableOfContents tableOfContents, InputStream sourceFileStream) throws InvalidAssociationException {
@@ -112,12 +112,12 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 * Creates a new or existing <code>FileResourceIdentifier</code> instance from an xml <code>org.w3c.dom.Element</code>.
 	 * <p>
 	 * NOTE: The preferred method to create a <code>FileResourceIdentifier</code> is to use the 
-	 * {@link TableOfContents#createFileResource} method on an existing <code>TableOfContents</code>.
+	 * {@link TableOfContents#createFileResourceIdentifier} method on an existing <code>TableOfContents</code>.
 	 * 
 	 * @param tableOfContents tableOfContents the <code>TableOfContents</code> instance the the created <code>FileResourceIdentifier</code> will be owned by
 	 * @param fileResourceIdentifierElement the xml <code>org.w3c.dom.Element</code> that represents this <code>FileResourceIdentifier</code>
 	 * @throws InvalidAssociationException if there is an invalid association
-	 * @see TableOfContents#createFileResource
+	 * @see TableOfContents#createFileResourceIdentifier
 	 */
 	protected FileResourceIdentifier(TableOfContents tableOfContents, Element fileResourceIdentifierElement) throws InvalidAssociationException {
 		this.tableOfContents = tableOfContents;

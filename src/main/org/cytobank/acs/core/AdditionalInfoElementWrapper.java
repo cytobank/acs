@@ -19,6 +19,7 @@
 
 package org.cytobank.acs.core;
 
+import java.util.Map;
 import java.util.Vector;
 
 import org.w3c.dom.Element;
@@ -56,9 +57,8 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 
 	}
 	
-	
 	/**
-	 * Adds additional info to this instance.
+	 * Adds an empty additional info to this instance.
 	 * <p>
 	 * As defined in the ACS specification: <i>Additional information may be provided in the Table of Contents XML file using the additional_info element. This element may be used either as a sub-element of the TOC element
 	 * to provide additional information related to the whole ACS, or as a sub-element of the file element to provide additional information related only to a specific file within
@@ -67,7 +67,32 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 	 * specification. However, the additional_info element shall not be used as replacement for describing associations describable by the associated element.</i>
 	 * 
 	 * @param info a <code>String</code> of additional info to add to this instance
-	 * @return the newly created additionalInfo
+	 * @return the newly created <code>AdditionalInfo</code>
+	 * @see <a href="http://flowcyt.sourceforge.net/acs/latest.pdf">Archival Cytometry Standard specification</a>
+	 */
+	public AdditionalInfo addAdditionalInfo() {
+		AdditionalInfo additionalInfo = new AdditionalInfo(this);
+		
+		trackAdditionalInfo(additionalInfo);		
+		element.appendChild(additionalInfo.element);
+		
+		return additionalInfo;
+	}
+
+	
+	
+	/**
+	 * Adds additional info to this instance.  All <code>String</code> info data will be escaped for XML.  If embedded tags are desired, {@link #addAdditionalInfo()} should be used instead,
+	 * followed up with calls to {@link AdditionalInfo#appendTaggedInfo(String, String)} or {@link AdditionalInfo#appendTaggedInfo(String, Map, String)} against the the newly created <code>AdditionalInfo</code>.
+	 * <p>
+	 * As defined in the ACS specification: <i>Additional information may be provided in the Table of Contents XML file using the additional_info element. This element may be used either as a sub-element of the TOC element
+	 * to provide additional information related to the whole ACS, or as a sub-element of the file element to provide additional information related only to a specific file within
+	 * the ACS container. There may be zero, one or multiple additional_info elements related to each file in ACS. Similarly, there may be zero, one or multiple additional_info
+	 * elements related to the whole ACS container. As long as the Table of Contents remains a valid XML file, the contents of the additional_info element is not restricted by this
+	 * specification. However, the additional_info element shall not be used as replacement for describing associations describable by the associated element.</i>
+	 * 
+	 * @param info a <code>String</code> of additional info to add to this instance
+	 * @return the newly created <code>AdditionalInfo</code>
 	 * @see <a href="http://flowcyt.sourceforge.net/acs/latest.pdf">Archival Cytometry Standard specification</a>
 	 */
 	public AdditionalInfo addAdditionalInfo(String info) {

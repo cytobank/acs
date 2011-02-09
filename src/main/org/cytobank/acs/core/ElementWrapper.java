@@ -19,8 +19,10 @@
 
 package org.cytobank.acs.core;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 /**
  * A simple base class that wraps and abstracts an </code>org.w3c.dom.Element</code>. 
@@ -72,6 +74,16 @@ public abstract class ElementWrapper {
 		return (node != null);
 	}
 	
+	
+	/**
+	 * Returns the owner <code>org.w3c.dom.Document</code> from the wrapped element.
+	 * 
+	 * @return the owner <code>org.w3c.dom.Document</code>
+	 */
+	protected Document getDocument() {
+		return element.getOwnerDocument();
+	}
+	
 	/**
 	 * Creates a new xml element at the top level of this <code>ElementWrapper</code>'s
 	 * xml document.
@@ -80,6 +92,18 @@ public abstract class ElementWrapper {
 	 * @return the created element
 	 */
 	protected Element createElement(String name) {
-		return element.getOwnerDocument().createElement(name);
+		return getDocument().createElement(name);
 	}
+	
+	/**
+	 * Creates a new xml element at the top level of this <code>ElementWrapper</code>'s
+	 * xml document.
+	 * 
+	 * @param name the name of the element to create
+	 * @return the created element
+	 */
+	protected Text createTextNode(String text) {
+		return getDocument().createTextNode(text);
+	}
+	
 }

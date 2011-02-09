@@ -405,22 +405,23 @@ public class FileResourceIdentifierTest {
 		assertTrue("FileResourceIdentifier.getAdditionalInfo() of a newly created TableOfContents should return an empty list", fileResourceIdentifier.getAdditionalInfo().length == 0);
 		
 		String additionalInfoString0 = "This is <who>my</who> additional info.\nAnd stuff!!!!";
+		String additionalInfoString0Escaped = "This is &lt;who&gt;my&lt;/who&gt; additional info.\nAnd stuff!!!!";
 		String additionalInfoString1 = "ZOMG!!! Kittens!!!";
 
 		fileResourceIdentifier.addAdditionalInfo(additionalInfoString0);
 		assertTrue("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", fileResourceIdentifier.getAdditionalInfo().length == 1);
-		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString0, fileResourceIdentifier.getAdditionalInfo()[0].getInfo());
+		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, fileResourceIdentifier.getAdditionalInfo()[0].toString());
 
 		fileResourceIdentifier.addAdditionalInfo(additionalInfoString1);
 		assertTrue("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", fileResourceIdentifier.getAdditionalInfo().length == 2);
-		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString0, fileResourceIdentifier.getAdditionalInfo()[0].getInfo());
-		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString1, fileResourceIdentifier.getAdditionalInfo()[1].getInfo());
+		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, fileResourceIdentifier.getAdditionalInfo()[0].toString());
+		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString1, fileResourceIdentifier.getAdditionalInfo()[1].toString());
 
 		FileResourceIdentifier reloadedFileResourceIdentifier = TestUtils.writeOutFileResourceIdentifierAndReload(fileResourceIdentifier);
 
 		assertTrue("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", reloadedFileResourceIdentifier.getAdditionalInfo().length == 2);
-		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString0, reloadedFileResourceIdentifier.getAdditionalInfo()[0].getInfo());
-		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString1, reloadedFileResourceIdentifier.getAdditionalInfo()[1].getInfo());
+		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, reloadedFileResourceIdentifier.getAdditionalInfo()[0].toString());
+		assertEquals("FileResourceIdentifier.getAdditionalInfo() should return any added additional info", additionalInfoString1, reloadedFileResourceIdentifier.getAdditionalInfo()[1].toString());
 	}
 	
 	@Test
@@ -428,34 +429,35 @@ public class FileResourceIdentifierTest {
 		FileResourceIdentifier fileResourceIdentifier = TestUtils.newFileResourceIdentifier(MY_NEW_FILE_PATH);
 
 		String additionalInfoString0 = "This is <who>my</who> additional info.\nAnd stuff!!!!";
+		String additionalInfoString0Escaped = "This is &lt;who&gt;my&lt;/who&gt; additional info.\nAnd stuff!!!!";
 		String additionalInfoString1 = "ZOMG!!! Kittens!!!";
 
 		fileResourceIdentifier.addAdditionalInfo(additionalInfoString0);
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", fileResourceIdentifier.getAdditionalInfo().length == 1);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, fileResourceIdentifier.getAdditionalInfo()[0].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, fileResourceIdentifier.getAdditionalInfo()[0].toString());
 
 		fileResourceIdentifier.addAdditionalInfo(additionalInfoString1);
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", fileResourceIdentifier.getAdditionalInfo().length == 2);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, fileResourceIdentifier.getAdditionalInfo()[0].getInfo());
-		assertEquals("TableOfContents.getAdditionalInfo() return any added additional info", additionalInfoString1, fileResourceIdentifier.getAdditionalInfo()[1].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, fileResourceIdentifier.getAdditionalInfo()[0].toString());
+		assertEquals("TableOfContents.getAdditionalInfo() return any added additional info", additionalInfoString1, fileResourceIdentifier.getAdditionalInfo()[1].toString());
 
 		FileResourceIdentifier reloadedFileResourceIdentifier = TestUtils.writeOutFileResourceIdentifierAndReload(fileResourceIdentifier);
 
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", reloadedFileResourceIdentifier.getAdditionalInfo().length == 2);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, reloadedFileResourceIdentifier.getAdditionalInfo()[0].getInfo());
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString1, reloadedFileResourceIdentifier.getAdditionalInfo()[1].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, reloadedFileResourceIdentifier.getAdditionalInfo()[0].toString());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString1, reloadedFileResourceIdentifier.getAdditionalInfo()[1].toString());
 
 		AdditionalInfo reloadedAdditionalInfo = reloadedFileResourceIdentifier.getAdditionalInfo()[0];
 		assertTrue("TableOfContents.removeAdditionalInfo should be able to be removed from an AdditionalInfo from a TableOfContents and return true on success", reloadedFileResourceIdentifier.removeAdditionalInfo(reloadedAdditionalInfo));
 		assertFalse("TableOfContents.removeAdditionalInfo should return false if the AdditionalInfo does not exist", reloadedFileResourceIdentifier.removeAdditionalInfo(reloadedAdditionalInfo));
 
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info after an AdditionalInfo removal", reloadedFileResourceIdentifier.getAdditionalInfo().length == 1);
-		assertEquals("TableOfContents.getAdditionalInfo() should return an updated list after an AdditionalInfo removal", additionalInfoString1, reloadedFileResourceIdentifier.getAdditionalInfo()[0].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return an updated list after an AdditionalInfo removal", additionalInfoString1, reloadedFileResourceIdentifier.getAdditionalInfo()[0].toString());
 		
 		FileResourceIdentifier reloadedFileResourceIdentifier2 = TestUtils.writeOutFileResourceIdentifierAndReload(reloadedFileResourceIdentifier); 
 
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info after an AdditionalInfo removal after a reload", reloadedFileResourceIdentifier2.getAdditionalInfo().length == 1);
-		assertEquals("TableOfContents.getAdditionalInfo() should return an updated list after an AdditionalInfo removal after a reload", additionalInfoString1, reloadedFileResourceIdentifier2.getAdditionalInfo()[0].getInfo());		
+		assertEquals("TableOfContents.getAdditionalInfo() should return an updated list after an AdditionalInfo removal after a reload", additionalInfoString1, reloadedFileResourceIdentifier2.getAdditionalInfo()[0].toString());		
 	}
 	
 	@Test

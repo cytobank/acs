@@ -21,11 +21,12 @@ package org.cytobank.acs.core;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+
 import org.cytobank.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 
 public class AdditionalInfoTest {
 	static final String MY_NEW_FILE = "/my_new_file";
@@ -42,16 +43,103 @@ public class AdditionalInfoTest {
 		String testText = "This is my additional info";
 		
 		AdditionalInfo additionalInfo = fileResourceIdentifier.addAdditionalInfo(testText);
-		assertEquals("AdditionalInfo.getInfo should return the set additional info text", testText, additionalInfo.getInfo());
+		assertEquals("AdditionalInfo.toString should return the set additional info text", testText, additionalInfo.toString());
 		
 		String newText = "This is my new text";
 		additionalInfo.setInfo(newText);
-		assertEquals("AdditionalInfo.getInfo should return the set additional info text", newText, additionalInfo.getInfo());
+		assertEquals("AdditionalInfo.toString should return the set additional info text", newText, additionalInfo.toString());
 		
 		FileResourceIdentifier reloadedFileResourceIdentifier = TestUtils.writeOutFileResourceIdentifierAndReload(fileResourceIdentifier);
 		AdditionalInfo reloadedAdditionalInfo = reloadedFileResourceIdentifier.getAdditionalInfo()[0];
 
-		assertEquals("AdditionalInfo.getInfo should return the set additional info text", newText, reloadedAdditionalInfo.getInfo());
+		assertEquals("AdditionalInfo.toString should return the set additional info text", newText, reloadedAdditionalInfo.toString());
+	}
+
+	@Test
+	public void testEmbededTags() throws Exception {
+		FileResourceIdentifier fileResourceIdentifier = TestUtils.newFileResourceIdentifier(MY_NEW_FILE_PATH);
+		
+		String testText = "This is information about a file.";
+		
+		AdditionalInfo additionalInfo = fileResourceIdentifier.addAdditionalInfo();
+		assertEquals("An empty AdditionalInfo.toString() should return an empty String", "", additionalInfo.toString());
+
+		additionalInfo.appendInfo(testText);
+		
+		assertEquals("AdditionalInfo.toString should return the set additional info text", testText, additionalInfo.toString());
+
+		additionalInfo.appendTaggedInfo("foo", "stuff");
+
+		String taggedInfo = "<foo>stuff</foo>";
+		
+		assertEquals("AdditionalInfo.toString should return the set additional tagged info", testText + taggedInfo, additionalInfo.toString());
+		
+		HashMap<String, String> attributes = new HashMap<String, String>();
+		
+		attributes.put("bar", "baz");
+		
+		additionalInfo.appendTaggedInfo("foo", attributes, "stuff");
+		
+		String attributedTaggedInfo = "<foo bar=\"baz\">stuff</foo>";
+				
+		assertEquals("AdditionalInfo.toString should return the set additional tagged info with attributes", testText + taggedInfo + attributedTaggedInfo, additionalInfo.toString());
+		
+		additionalInfo.setKeyword("bird", "parakeet");
+		
+		String keywordInfo = "<keyword name=\"bird\">parakeet</keyword>";
+
+		assertEquals("AdditionalInfo.toString should return the set additional keyword info", testText + taggedInfo + attributedTaggedInfo + keywordInfo, additionalInfo.toString());
+	}
+	
+	@Test
+	public void testSetAndRemoveKeywords() throws Exception {
+		FileResourceIdentifier fileResourceIdentifier = TestUtils.newFileResourceIdentifier(MY_NEW_FILE_PATH);
+		
+		String testText = "This is information about a file.";
+		
+		AdditionalInfo additionalInfo = fileResourceIdentifier.addAdditionalInfo();
+		assertEquals("An empty AdditionalInfo.toString() should return an empty String", "", additionalInfo.toString());
+
+		additionalInfo.appendInfo(testText);
+		
+		assertEquals("AdditionalInfo.toString should return the set additional info text", testText, additionalInfo.toString());
+
+		additionalInfo.setKeyword("bird", "parakeet");
+		
+		String parakeetKeywordInfo = "<keyword name=\"bird\">parakeet</keyword>";
+
+		assertEquals("AdditionalInfo.toString should return the set additional keyword info", testText + parakeetKeywordInfo, additionalInfo.toString());
+		
+		additionalInfo.removeKeyword("bird");
+		
+		additionalInfo.setKeyword("bird", "parakeet");
+
+		assertEquals("AdditionalInfo.toString should return the set additional keyword info", testText + parakeetKeywordInfo, additionalInfo.toString());
+
+		additionalInfo.setKeyword("bird", "eagle");
+
+		String eagleKeywordInfo = "<keyword name=\"bird\">eagle</keyword>";
+
+		assertEquals("AdditionalInfo.setKeyword should overwrite previous keywords by the same name", testText + eagleKeywordInfo, additionalInfo.toString());
+	}
+
+
+	@Test
+	public void testClearInfo() throws Exception {
+		FileResourceIdentifier fileResourceIdentifier = TestUtils.newFileResourceIdentifier(MY_NEW_FILE_PATH);
+		
+		String testText = "This is information about a file.";
+		
+		AdditionalInfo additionalInfo = fileResourceIdentifier.addAdditionalInfo();
+		assertEquals("An empty AdditionalInfo.toString() should return an empty String", "", additionalInfo.toString());
+
+		additionalInfo.appendInfo(testText);
+		
+		assertEquals("AdditionalInfo.toString should return the set additional info text", testText, additionalInfo.toString());
+
+		additionalInfo.clearInfo();
+
+		assertEquals("AdditionalInfo.toString should return an empty String after AdditionalInfo.clearInfo() is called", "", additionalInfo.toString());
 	}
 	
 	@After

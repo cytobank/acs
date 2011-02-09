@@ -220,18 +220,20 @@ public class TableOfContentsTest {
 		assertTrue("TableOfContents.getAdditionalInfo() of a newly created TableOfContents should return an empty list", tableOfContents.getAdditionalInfo().length == 0);
 		
 		String additionalInfoString0 = "This is <who>my</who> additional info.\nAnd stuff!!!!";
+		String additionalInfoString0Escaped = "This is &lt;who&gt;my&lt;/who&gt; additional info.\nAnd stuff!!!!";
+
 		String additionalInfoString1 = "OMG!!! Kittens!!!";
 
 		tableOfContents.addAdditionalInfo(additionalInfoString0);
 		assertTrue("TableOfContents.getAdditionalInfo() should return no additional info on TableOfContents that didn't have any", tableOfContentsV1.getAdditionalInfo().length == 0);
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", tableOfContents.getAdditionalInfo().length == 1);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, tableOfContents.getAdditionalInfo()[0].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, tableOfContents.getAdditionalInfo()[0].toString());
 
 		tableOfContents.addAdditionalInfo(additionalInfoString1);
 		assertTrue("TableOfContents.getAdditionalInfo() should return no additional info on TableOfContents that didn't have any", tableOfContentsV1.getAdditionalInfo().length == 0);
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", tableOfContents.getAdditionalInfo().length == 2);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, tableOfContents.getAdditionalInfo()[0].getInfo());
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString1, tableOfContents.getAdditionalInfo()[1].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, tableOfContents.getAdditionalInfo()[0].toString());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString1, tableOfContents.getAdditionalInfo()[1].toString());
 
 		TableOfContents reloadedTableOfContents = TestUtils.writeOutTableOfContentsAndReload(tableOfContents); 
 
@@ -239,8 +241,8 @@ public class TableOfContentsTest {
 
 		assertTrue("TableOfContents.getAdditionalInfo() should return no additional info on TableOfContents that didn't have any", reloadedTableOfContentsV1.getAdditionalInfo().length == 0);
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", reloadedTableOfContents.getAdditionalInfo().length == 2);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, reloadedTableOfContents.getAdditionalInfo()[0].getInfo());
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString1, reloadedTableOfContents.getAdditionalInfo()[1].getInfo());		
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, reloadedTableOfContents.getAdditionalInfo()[0].toString());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString1, reloadedTableOfContents.getAdditionalInfo()[1].toString());		
 	}
 	
 	@Test
@@ -252,34 +254,36 @@ public class TableOfContentsTest {
 		assertTrue("TableOfContents.getAdditionalInfo() of a newly created TableOfContents should return an empty list", tableOfContents.getAdditionalInfo().length == 0);
 		
 		String additionalInfoString0 = "This is <who>my</who> additional info.\nAnd stuff!!!!";
+		String additionalInfoString0Escaped = "This is &lt;who&gt;my&lt;/who&gt; additional info.\nAnd stuff!!!!";
+
 		String additionalInfoString1 = "ZOMG!!! Kittens!!!";
 
 		tableOfContents.addAdditionalInfo(additionalInfoString0);
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", tableOfContents.getAdditionalInfo().length == 1);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, tableOfContents.getAdditionalInfo()[0].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, tableOfContents.getAdditionalInfo()[0].toString());
 
 		tableOfContents.addAdditionalInfo(additionalInfoString1);
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", tableOfContents.getAdditionalInfo().length == 2);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, tableOfContents.getAdditionalInfo()[0].getInfo());
-		assertEquals("TableOfContents.getAdditionalInfo() return any added additional info", additionalInfoString1, tableOfContents.getAdditionalInfo()[1].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, tableOfContents.getAdditionalInfo()[0].toString());
+		assertEquals("TableOfContents.getAdditionalInfo() return any added additional info", additionalInfoString1, tableOfContents.getAdditionalInfo()[1].toString());
 
 		TableOfContents reloadedTableOfContents = TestUtils.writeOutTableOfContentsAndReload(tableOfContents); 
 
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info", reloadedTableOfContents.getAdditionalInfo().length == 2);
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0, reloadedTableOfContents.getAdditionalInfo()[0].getInfo());
-		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString1, reloadedTableOfContents.getAdditionalInfo()[1].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString0Escaped, reloadedTableOfContents.getAdditionalInfo()[0].toString());
+		assertEquals("TableOfContents.getAdditionalInfo() should return any added additional info", additionalInfoString1, reloadedTableOfContents.getAdditionalInfo()[1].toString());
 
 		AdditionalInfo reloadedAdditionalInfo = reloadedTableOfContents.getAdditionalInfo()[0];
 		assertTrue("TableOfContents.removeAdditionalInfo should be able to be removed from an AdditionalInfo from a TableOfContents and return true on success", reloadedTableOfContents.removeAdditionalInfo(reloadedAdditionalInfo));
 		assertFalse("TableOfContents.removeAdditionalInfo should return false if the AdditionalInfo does not exist", reloadedTableOfContents.removeAdditionalInfo(reloadedAdditionalInfo));
 
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info after an AdditionalInfo removal", reloadedTableOfContents.getAdditionalInfo().length == 1);
-		assertEquals("TableOfContents.getAdditionalInfo() should return an updated list after an AdditionalInfo removal", additionalInfoString1, reloadedTableOfContents.getAdditionalInfo()[0].getInfo());
+		assertEquals("TableOfContents.getAdditionalInfo() should return an updated list after an AdditionalInfo removal", additionalInfoString1, reloadedTableOfContents.getAdditionalInfo()[0].toString());
 		
 		TableOfContents reloadedTableOfContents2 = TestUtils.writeOutTableOfContentsAndReload(reloadedTableOfContents); 
 
 		assertTrue("TableOfContents.getAdditionalInfo() should return any added additional info after an AdditionalInfo removal after a reload", reloadedTableOfContents2.getAdditionalInfo().length == 1);
-		assertEquals("TableOfContents.getAdditionalInfo() should return an updated list after an AdditionalInfo removal after a reload", additionalInfoString1, reloadedTableOfContents2.getAdditionalInfo()[0].getInfo());		
+		assertEquals("TableOfContents.getAdditionalInfo() should return an updated list after an AdditionalInfo removal after a reload", additionalInfoString1, reloadedTableOfContents2.getAdditionalInfo()[0].toString());		
 	}
 	
 	@Test

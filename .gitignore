@@ -5,4 +5,4 @@ ACS.launch
 dist
 bin
 build
-test
+./test

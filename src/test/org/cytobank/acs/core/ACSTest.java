@@ -126,17 +126,10 @@ public class ACSTest {
 		acsV2.writeAcsContainer(newAcsFile);
 		
 		ACS newAcs = new ACS(newAcsFile);
-		
-		for (String file : newAcs.getInventory()) {
-			System.out.println(file);
-		}
-		
+				
 		assertEquals((Integer) 3, (Integer) newAcs.getCurrentVersion());
-		TableOfContents tableOfContents_v3 = newAcs.getTableOfContents();
-
 		
-		System.out.println(tableOfContents_v3.toXml());
-
+		TableOfContents tableOfContents_v3 = newAcs.getTableOfContents();
 		
 		assertNotNull(tableOfContents_v3);
 		assertEquals((Integer) 3, (Integer) tableOfContents_v3.getVersion());

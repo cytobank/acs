@@ -85,8 +85,7 @@ public abstract class ElementWrapper {
 	}
 	
 	/**
-	 * Creates a new xml element at the top level of this <code>ElementWrapper</code>'s
-	 * xml document.
+	 * Creates a new xml <code>org.w3c.dom.Element</code>.
 	 * 
 	 * @param name the name of the element to create
 	 * @return the created element
@@ -96,11 +95,10 @@ public abstract class ElementWrapper {
 	}
 	
 	/**
-	 * Creates a new xml element at the top level of this <code>ElementWrapper</code>'s
-	 * xml document.
+	 * Creates a new xml <code>org.w3c.dom.Text</code> element.
 	 * 
-	 * @param name the name of the element to create
-	 * @return the created element
+	 * @param text the value of the <code>org.w3c.dom.Text</code> element
+	 * @return the created <code>org.w3c.dom.Text</code> element
 	 */
 	protected Text createTextNode(String text) {
 		return getDocument().createTextNode(text);

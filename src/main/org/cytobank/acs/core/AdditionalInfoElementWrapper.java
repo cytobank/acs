@@ -66,7 +66,6 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 	 * elements related to the whole ACS container. As long as the Table of Contents remains a valid XML file, the contents of the additional_info element is not restricted by this
 	 * specification. However, the additional_info element shall not be used as replacement for describing associations describable by the associated element.</i>
 	 * 
-	 * @param info a <code>String</code> of additional info to add to this instance
 	 * @return the newly created <code>AdditionalInfo</code>
 	 * @see <a href="http://flowcyt.sourceforge.net/acs/latest.pdf">Archival Cytometry Standard specification</a>
 	 */

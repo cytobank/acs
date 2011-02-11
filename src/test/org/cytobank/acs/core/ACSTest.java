@@ -48,25 +48,23 @@ public class ACSTest {
 	@Test
 	public void contructAcsInstance() throws Exception {
 		ACS acs = new ACS();
-		assertEquals((Integer) 1, (Integer) acs.getCurrentVersion());
+		assertEquals((Integer) 0, (Integer) acs.getCurrentVersion());
 		TableOfContents tableOfContents = acs.getTableOfContents();
-		assertEquals((Integer) 0, (Integer) tableOfContents.getFileResourceIdentifiers().length);
+		assertNull("A new ACS instance should return null on ACS.getTableOfContents()", tableOfContents);
 	}
 	
 	@Test
 	public void testCreateNewTableOfContents() throws Exception {
 		ACS acs = new ACS();
-		TableOfContents tableOfContentsV1 = acs.getTableOfContents();
+		TableOfContents tableOfContents = acs.getTableOfContents();
 		
-		assertEquals((Integer) 1, (Integer) acs.getCurrentVersion());
-		assertEquals((Integer) 1, (Integer) tableOfContentsV1.getVersion());
-		assertEquals((Integer) 0, (Integer) tableOfContentsV1.getNumberOfFileResourceIdentifiers());
+		assertEquals((Integer) 0, (Integer) acs.getCurrentVersion());
+		assertNull("A new ACS instance should return null on ACS.getTableOfContents()", tableOfContents);
 		
-		TableOfContents tableOfContentsV2 = acs.createNextTableOfContents();
+		TableOfContents nextTableOfContents = acs.createNextTableOfContents();
 
-		assertEquals((Integer) 2, (Integer) acs.getCurrentVersion());
-		assertEquals((Integer) 1, (Integer) tableOfContentsV1.getVersion());
-		assertEquals((Integer) 2, (Integer) tableOfContentsV2.getVersion());		
+		assertEquals("After calling ACS.createNextTableOfContents() on a new ACS, the first version should be 1", (Integer) 1, (Integer) acs.getCurrentVersion());
+		assertEquals("Calling TableOfContents.getVersion() after the first ACS.createNextTableOfContents() call, the version should be 1", (Integer) 1, (Integer) nextTableOfContents.getVersion());
 	}
 
 	@Test

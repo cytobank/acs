@@ -76,7 +76,7 @@ public class ACS {
 	 * Creates an <code>ACS</code> instance with no contents.
 	 */
 	public ACS() {
-		createNextTableOfContents();
+
 	}
 
 	/**
@@ -284,6 +284,25 @@ public class ACS {
 		} catch (Exception ignore) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Writes out this <code>ACS</code> container to a <code>String</code> file path.  If this instance was created from an existing ACS container, that file will not be modified and only 
+	 * the contents specified within the previous ACS container's <code>TableOfContents</code>s' <code>FileResourceIdentifier</code>s will be copied over, in addition
+	 * to a new <code>TableOfContents</code>'s <code>FileResourceIdentifier</code>s created.
+	 * <p>
+	 * NOTE: The current implementation only allows one call to <code>writeAcsContainer</code> to be made since the {@link FileResourceIdentifier#sourceFileStream} will
+	 * have already been read from and exhausted.
+	 * 
+	 * @param filePath The <code>String</code> file path to write the ACS container to.  This should not be original ACS container that this <code>ACS</code> instance
+	 * is based in (if there is one).
+	 * @throws IOException If an input or output exception occurred
+	 * @throws InvalidIndexException If there is a problem with one of the <code>TableOfContents</code> 
+	 * @throws URISyntaxException If there is a problem with any of the URIs contained within the <code>TableOfContents</code>
+	 */
+	public void writeAcsContainer(String filePath) throws IOException, InvalidIndexException, URISyntaxException {		
+		File targetFile = new File(filePath);		
+		writeAcsContainer(targetFile);
 	}
 	
 	/**

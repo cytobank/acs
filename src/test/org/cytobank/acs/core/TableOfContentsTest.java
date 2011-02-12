@@ -24,11 +24,13 @@ import java.net.URI;
 
 import org.junit.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.cytobank.TestUtils;
 import org.cytobank.acs.core.ACS;
 import org.cytobank.acs.core.FileResourceIdentifier;
 import org.cytobank.acs.core.TableOfContents;
 import org.cytobank.acs.core.exceptions.DuplicateFileResourceIdentifierException;
+import org.cytobank.acs.util.FileUtils;
 
 import static org.junit.Assert.*;
 
@@ -74,6 +76,99 @@ public class TableOfContentsTest {
 
 	@Before
 	public void setUp() throws Exception {
+	}
+	
+	@Test
+	public void testCreateFileResourceIdentifierAndCreateFcsFileResourceIdentifier() throws Exception {
+		ACS acs = new ACS();
+		File newFile1 = TestUtils.testFile();
+		
+		String stringUri1 = "file:///testFile";
+		
+		TableOfContents tableOfContents = acs.createNextTableOfContents();
+		tableOfContents.createFileResourceIdentifier(stringUri1, newFile1.getPath());
+		
+		FileResourceIdentifier fileResourceIdentifier = tableOfContents.getFileResourceIdentifierByUri(stringUri1);
+		
+		assertNotNull("TableOfContents.createFileResourceIdentifier should be able to create a FileResourceIdentifier with a String uri and String path", fileResourceIdentifier);
+		assertEquals("TableOfContents.createFileResourceIdentifier should be able to create a FileResourceIdentifier with a String uri and String path that returns the correct URI", stringUri1, fileResourceIdentifier.getUri().toString());
+
+		
+		File newFile2 = TestUtils.testFile();
+		String stringUri2 = stringUri1 + "2";
+
+		tableOfContents.createFileResourceIdentifier(new URI(stringUri2), newFile2);
+		
+		FileResourceIdentifier fileResourceIdentifier2 = tableOfContents.getFileResourceIdentifierByUri(stringUri2);
+		
+		assertNotNull("TableOfContents.createFileResourceIdentifier should be able to create a FileResourceIdentifier with a URI uri and File path", fileResourceIdentifier2);
+		assertEquals("TableOfContents.createFileResourceIdentifier should be able to create a FileResourceIdentifier with a URI uri and File path that returns the correct URI", stringUri2, fileResourceIdentifier2.getUri().toString());
+
+		
+		File newFile3 = TestUtils.testFile();
+		
+		String mime      = "mime";
+		String stringUri3 = stringUri1 + "3";
+		
+		tableOfContents.createFileResourceIdentifier(stringUri3, newFile3.getPath(), mime);
+		
+		FileResourceIdentifier fileResourceIdentifier3 = tableOfContents.getFileResourceIdentifierByUri(stringUri3);
+		
+		assertNotNull("TableOfContents.createFileResourceIdentifier should be able to create a FileResourceIdentifier with a String uri and String path and MIME", fileResourceIdentifier3);
+		assertEquals("TableOfContents.createFileResourceIdentifier should be able to create a FileResourceIdentifier with a String uri and String path and MIME that returns the correct URI", stringUri3, fileResourceIdentifier3.getUri().toString());
+
+		
+		File newFile4 = TestUtils.testFile();
+		String stringUri4 = stringUri1 + "4";
+
+		tableOfContents.createFileResourceIdentifier(new URI(stringUri4), newFile4, mime);
+		
+		FileResourceIdentifier fileResourceIdentifier4 = tableOfContents.getFileResourceIdentifierByUri(stringUri4);
+		
+		assertNotNull("TableOfContents.createFileResourceIdentifier should be able to create a FileResourceIdentifier with a URI uri and File path", fileResourceIdentifier4);
+		assertEquals("TableOfContents.createFileResourceIdentifier should be able to create a FileResourceIdentifier with a URI uri and File path that returns the correct URI", stringUri4, fileResourceIdentifier4.getUri().toString());
+
+		
+		// Test createFcsFileResourceIdentifier
+		File newFile5 = TestUtils.testFile();
+		
+		String stringUri5 = stringUri1 + "5";
+		
+		tableOfContents.createFcsFileResourceIdentifier(stringUri5, newFile5.getPath());
+		
+		FileResourceIdentifier fileResourceIdentifier5 = tableOfContents.getFileResourceIdentifierByUri(stringUri5);
+		
+		assertNotNull("TableOfContents.createFcsFileResourceIdentifier should be able to create a FileResourceIdentifier with a String uri and String path", fileResourceIdentifier5);
+		assertEquals("TableOfContents.createFcsFileResourceIdentifier should be able to create a FileResourceIdentifier with a String uri and String path that returns the correct URI", stringUri5, fileResourceIdentifier5.getUri().toString());
+
+		
+		File newFile6 = TestUtils.testFile();
+		String stringUri6 = stringUri1 + "6";
+
+		tableOfContents.createFcsFileResourceIdentifier(new URI(stringUri6), newFile6);
+		
+		FileResourceIdentifier fileResourceIdentifier6 = tableOfContents.getFileResourceIdentifierByUri(stringUri6);
+		
+		assertNotNull("TableOfContents.createFcsFileResourceIdentifier should be able to create a FileResourceIdentifier with a URI uri and File path", fileResourceIdentifier6);
+		assertEquals("TableOfContents.createFcsFileResourceIdentifier should be able to create a FileResourceIdentifier with a URI uri and File path that returns the correct URI", stringUri6, fileResourceIdentifier6.getUri().toString());
+
+		TableOfContents reloadedTableOfContents = TestUtils.writeOutTableOfContentsAndReload(tableOfContents);
+		assertTrue(StringUtils.isNotBlank(reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri1).writeRepresentedFileToString()));
+		assertTrue(StringUtils.isNotBlank(reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri2).writeRepresentedFileToString()));
+		assertTrue(StringUtils.isNotBlank(reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri3).writeRepresentedFileToString()));
+		assertTrue(StringUtils.isNotBlank(reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri4).writeRepresentedFileToString()));
+		assertTrue(StringUtils.isNotBlank(reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri5).writeRepresentedFileToString()));
+		assertTrue(StringUtils.isNotBlank(reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri6).writeRepresentedFileToString()));
+				
+		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile1), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri1).writeRepresentedFileToString());
+		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile2), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri2).writeRepresentedFileToString());
+		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile3), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri3).writeRepresentedFileToString());
+		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile4), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri4).writeRepresentedFileToString());
+		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile5), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri5).writeRepresentedFileToString());
+		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile6), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri6).writeRepresentedFileToString());
+
+		
+		
 	}
 	
 	@Test

@@ -19,6 +19,7 @@
 
 package org.cytobank.acs.core;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -182,6 +183,35 @@ public class ACS {
 		FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
 		extractFile(filePath, fileOutputStream);
 		fileOutputStream.close();
+	}
+	
+	/**
+	 * Writes out a file contained within this <code>ACS</code> container to a <code>String</code>.  This method is provided as a convenience to be able
+	 * to work with small text files without the hassle of writing them out to disk first.  It should not be used with large files or FCS files.
+	 * 
+	 * @param uri the uri representing a file within this <code>ACS</code> instance.
+	 * @throws IOException If an input or output exception occurred
+	 */
+	public String extractFileToString(URI uri) throws IOException {
+		if (!Constants.FILE_SCHEME.equals(uri.getScheme()))
+			return null;
+		
+		return extractFileToString(uri.getPath());
+	}
+	
+	/**
+	 * Writes out a file contained within this <code>ACS</code> container to a <code>String</code>.  This method is provided as a convenience to be able
+	 * to work with small text files without the hassle of writing them out to disk first.  It should not be used with large files or FCS files.
+	 * 
+	 * @param filePath the <code>String</code> path representing a file within this <code>ACS</code> instance.
+	 * @throws IOException If an input or output exception occurred
+	 */
+	public String extractFileToString(String filePath) throws IOException {
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		
+		extractFile(filePath, byteArrayOutputStream);
+		
+		return byteArrayOutputStream.toString();
 	}
 	
 	/**

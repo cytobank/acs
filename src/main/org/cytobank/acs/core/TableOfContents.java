@@ -289,6 +289,23 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 	 * Creates a new <code>FileResourceIdentifier</code> that will be owned by this <code>TableOfContents</code> from a local file.
 	 *
 	 * @param resourcePath the <code>String</code> uri of the resource, which must be unique within this <code>TableOfContents</code>
+	 * @param sourceFilePath the <code>String</code> path to the file that the <code>FileResourceIdentifier</code> will represent
+	 * @return a new <code>FileResourceIdentifier</code>
+	 * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code> 
+	 * @throws URISyntaxException If there is a problem with any of the URIs contained within the <code>TableOfContents</code> or if the URI is a duplicate
+	 * @throws IOException If an input or output exception occurred
+	 * @throws InvalidAssociationException if there is an invalid association
+	 * @throws InvalidFileResourceUriSchemeException if the resourcePath <code>URI</code> contains a scheme that is not allowed according to the ACS specification.
+	 * @throws DuplicateFileResourceIdentifierException If any of the URIs contained within the <code>TableOfContents</code> is a duplicate 
+	 */
+	public FileResourceIdentifier createFileResourceIdentifier(String resourcePath, String sourceFilePath) throws InvalidIndexException, URISyntaxException, IOException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {		
+		return createFileResourceIdentifier(new URI(resourcePath), new File(sourceFilePath));
+	}
+	
+	/**
+	 * Creates a new <code>FileResourceIdentifier</code> that will be owned by this <code>TableOfContents</code> from a local file.
+	 *
+	 * @param resourcePath the <code>String</code> uri of the resource, which must be unique within this <code>TableOfContents</code>
 	 * @param sourceFile the <code>File</code> that the <code>FileResourceIdentifier</code> will represent
 	 * @return a new <code>FileResourceIdentifier</code>
 	 * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code> 
@@ -366,6 +383,71 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 		return fileResource;
 	}
 
+	/**
+	 * Creates a new <code>FileResourceIdentifier</code> that will be owned by this <code>TableOfContents</code> from a local fcs.
+	 * <p>
+	 * NOTE: "application/vnd.isac.fcs" is the expected MIME type to be used in the case of FCS files. (Available in {@link Constants#FCS_FILE_MIME_TYPE}.)
+	 *
+	 * @param resourcePath the case-insensitive <code>URI</code> of the resource, which must be unique within this <code>TableOfContents</code>
+	 * @param sourceFile the <code>File</code> that the <code>FileResourceIdentifier</code> will represent
+	 * @return a new <code>FileResourceIdentifier</code>
+	 * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code> 
+	 * @throws URISyntaxException If there is a problem with any of the URIs contained within the <code>TableOfContents</code> or if the URI is a duplicate
+	 * @throws IOException If an input or output exception occurred
+	 * @throws InvalidAssociationException if there is an invalid association
+	 * @throws InvalidFileResourceUriSchemeException if the resourcePath <code>URI</code> contains a scheme that is not allowed according to the ACS specification.
+	 * @throws DuplicateFileResourceIdentifierException If any of the URIs contained within the <code>TableOfContents</code> is a duplicate 
+	 * @see Constants#FCS_FILE_MIME_TYPE
+	 */
+	public FileResourceIdentifier createFcsFileResourceIdentifier(URI resourcePath, File sourceFile) throws InvalidIndexException, URISyntaxException, IOException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
+		return createFileResourceIdentifier(resourcePath, sourceFile, Constants.FCS_FILE_MIME_TYPE);
+	}
+	
+	/**
+	 * Creates a new <code>FileResourceIdentifier</code> that will be owned by this <code>TableOfContents</code> from a local fcs file.
+	 * <p>
+	 * NOTE: "application/vnd.isac.fcs" is the expected MIME type to be used in the case of FCS files. (Available in {@link Constants#FCS_FILE_MIME_TYPE}.)
+	 *
+	 * @param resourcePath the case-insensitive <code>String</code> uri of the resource, which must be unique within this <code>TableOfContents</code>
+	 * @param sourcePath the <code>String</code> file path to the file that the <code>FileResourceIdentifier</code> will represent
+	 * @return a new <code>FileResourceIdentifier</code>
+	 * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code> 
+	 * @throws URISyntaxException If there is a problem with any of the URIs contained within the <code>TableOfContents</code> or if the URI is a duplicate
+	 * @throws IOException If an input or output exception occurred
+	 * @throws InvalidAssociationException if there is an invalid association
+	 * @throws InvalidFileResourceUriSchemeException if the resourcePath <code>URI</code> contains a scheme that is not allowed according to the ACS specification.
+	 * @throws DuplicateFileResourceIdentifierException If any of the URIs contained within the <code>TableOfContents</code> is a duplicate 
+	 * @see Constants#FCS_FILE_MIME_TYPE
+	 */
+	public FileResourceIdentifier createFcsFileResourceIdentifier(String resourcePath, String sourcePath) throws InvalidIndexException, URISyntaxException, IOException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
+		URI resourcePathUri = new URI(resourcePath);
+		File sourceFile = new File(sourcePath);
+		return createFileResourceIdentifier(resourcePathUri, sourceFile, Constants.FCS_FILE_MIME_TYPE);
+	}
+	
+	/**
+	 * Creates a new <code>FileResourceIdentifier</code> that will be owned by this <code>TableOfContents</code> from a local file with a specified MIME type.
+	 * <p>
+	 * NOTE: "application/vnd.isac.fcs" is the expected MIME type to be used in the case of FCS files. (Available in {@link Constants#FCS_FILE_MIME_TYPE}.)
+	 *
+	 * @param resourcePath the case-insensitive <code>String</code> uri of the resource, which must be unique within this <code>TableOfContents</code>
+	 * @param sourcePath the <code>String</code> file path to the file that the <code>FileResourceIdentifier</code> will represent
+	 * @param mimeType the MIME type to be associated with the file
+	 * @return a new <code>FileResourceIdentifier</code>
+	 * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code> 
+	 * @throws URISyntaxException If there is a problem with any of the URIs contained within the <code>TableOfContents</code> or if the URI is a duplicate
+	 * @throws IOException If an input or output exception occurred
+	 * @throws InvalidAssociationException if there is an invalid association
+	 * @throws InvalidFileResourceUriSchemeException if the resourcePath <code>URI</code> contains a scheme that is not allowed according to the ACS specification.
+	 * @throws DuplicateFileResourceIdentifierException If any of the URIs contained within the <code>TableOfContents</code> is a duplicate 
+	 * @see Constants#FCS_FILE_MIME_TYPE
+	 */
+	public FileResourceIdentifier createFileResourceIdentifier(String resourcePath, String sourcePath, String mimeType) throws InvalidIndexException, URISyntaxException, IOException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
+		URI resourcePathUri = new URI(resourcePath);
+		File sourceFile = new File(sourcePath);
+		return createFileResourceIdentifier(resourcePathUri, sourceFile, mimeType);
+	}
+	
 	/**
 	 * Creates a new <code>FileResourceIdentifier</code> that will be owned by this <code>TableOfContents</code> from a local file with a specified MIME type.
 	 * <p>

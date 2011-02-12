@@ -19,6 +19,7 @@
 
 package org.cytobank.acs.core;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -453,6 +454,37 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 			fileOutputStream.close();
 		}
 	}
+	
+	/**
+	 * Write the file that this <code>FileResourceIdentifier</code> represents to a <code>String</code>.
+	 * 
+	 * @return a <code>String</code> with the contents of the file that this <code>FileResourceIdentifier</code> represents
+	 * @throws IOException If an input or output exception occurred
+	 * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code> 
+	 * @throws URISyntaxException If there is a problem with any of the URIs
+	 */
+	// TODO extract remote file
+	public String writeRepresentedFileToString() throws IOException, InvalidIndexException, URISyntaxException {
+		// If a sourceInputStream is available, that means that this FileResorceInstance represents a file that
+		// has not yet been written to a zip file and needs to be extracted from an external source
+		if (hasSourceInputStream()) {
+			try {
+				// Do not allow the sourceInputStream to be read more than once
+				if (this.sourceInputStreamReadFrom)
+					throw new IOException("sourceFileStream has already been read from");
+
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();				
+				FileUtils.writeInputStreamToOutputStream(sourceFileStream, byteArrayOutputStream);
+				return byteArrayOutputStream.toString();
+			} finally {
+				this.sourceInputStreamReadFrom = true;
+			}
+		} else {
+			ACS acs = getAcs();
+			return acs.extractFileToString(getUri());
+		}
+	}
+
 	
 	/**
 	 * Returns <code>true</code> if the file that this <code>FileResourceIdentifier</code> represents source exists outside the ACS container as a source stream.

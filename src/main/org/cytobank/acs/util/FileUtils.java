@@ -19,6 +19,7 @@
 
 package org.cytobank.acs.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -49,10 +50,14 @@ public class FileUtils {
 		}
 		finally {
 			if(sourceChannel != null) {
-				sourceChannel.close();
+				try {
+					sourceChannel.close();
+				} catch (Throwable ignore) {}
 			}
 			if(destinationChannel != null) {
-				destinationChannel.close();
+				try {
+					destinationChannel.close();
+				} catch (Throwable ignore) {}
 			}
 		}
 	}
@@ -66,8 +71,13 @@ public class FileUtils {
 	 */
 	public static void writeFileToOutputStream(ZipInputStream zipInputStream, File outputFile) throws IOException {
 		FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
-		writeInputStreamToOutputStream(zipInputStream, fileOutputStream);
-		fileOutputStream.close();
+		try {
+			writeInputStreamToOutputStream(zipInputStream, fileOutputStream);
+		} finally {
+			try {
+				fileOutputStream.close();
+			} catch (Throwable ignore) {}
+		}
 	}
 	
 	/**
@@ -75,14 +85,43 @@ public class FileUtils {
 	 * 
 	 * @param inputStream the <code>InputStream</code> to read
 	 * @param outputStream the <code>OutputStream</code> to write to
+	 * @return the number of bytes written
 	 * @throws IOException If an input or output exception occurred
 	 */
-	public static void writeInputStreamToOutputStream(InputStream inputStream, OutputStream outputStream) throws IOException {		
-		byte[] byteBuffer = new byte[BYTE_BUFFER_SIZE];
+	public static long writeInputStreamToOutputStream(InputStream inputStream, OutputStream outputStream) throws IOException {		
+		final byte[] byteBuffer = new byte[BYTE_BUFFER_SIZE];
 		
-		int read;
+		int read;		
+		long written = 0;
 		
-		while ((read = inputStream.read(byteBuffer, 0, BYTE_BUFFER_SIZE)) > 0)
+		while ((read = inputStream.read(byteBuffer, 0, BYTE_BUFFER_SIZE)) > 0) {
 			outputStream.write(byteBuffer, 0, read); 
+			written += read;
+		}
+		
+		return written;
+	}
+	
+	/**
+	 * Read in the contents of a file and return it as a String.
+	 * 
+	 * @param file The <code>File</code> to read in as a String
+	 * @return the resulting string
+	 * @throws IOException If an input or output exception occurred
+	 */
+	public static String fileToString(File file) throws IOException {
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		
+		FileInputStream fileInputStream = new FileInputStream(file);
+		
+		try {
+			writeInputStreamToOutputStream(fileInputStream, byteArrayOutputStream);
+		} finally {
+			try {
+				fileInputStream.close();
+			} catch (Throwable ignore) {}
+		}
+		
+		return byteArrayOutputStream.toString();
 	}
 }

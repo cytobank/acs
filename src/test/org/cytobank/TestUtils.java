@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.Random;
 
 import org.cytobank.acs.core.ACS;
 import org.cytobank.acs.core.FileResourceIdentifier;
@@ -39,6 +40,8 @@ public class TestUtils {
 
 	public static final String U937_ACS_TEST_FILE2 = "u937_v2.acs";
 	
+	public static final Random random = new Random();
+	
 	/*
 	 * Generate a test file
 	 */
@@ -46,7 +49,7 @@ public class TestUtils {
 		File result = File.createTempFile("AcsTest", "tmp");
 
 		PrintStream printStream = new PrintStream(result);
-		String contents = "This is a test. " + System.currentTimeMillis() + "\n";
+		String contents = "This is a test. " + System.currentTimeMillis() + "\nAnd a random number for good measure: " + random.nextDouble();
 		printStream.append(contents);
 		printStream.close();
 			

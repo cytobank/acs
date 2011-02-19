@@ -28,6 +28,7 @@ import org.cytobank.TestUtils;
 import org.cytobank.acs.core.ACS;
 import org.cytobank.acs.core.FileResourceIdentifier;
 import org.cytobank.acs.core.TableOfContents;
+import org.cytobank.acs.util.FileUtils;
 
 import static org.junit.Assert.*;
 
@@ -141,7 +142,28 @@ public class ACSTest {
 		String rewrittenFileMd5sum = TestUtils.md5sum(rewrittenFile);
 		
 		assertEquals(newFileMd5sum, rewrittenFileMd5sum);
-		 
+	}
+	
+	/*
+	 * Tests ticket #1
+	 */
+	@Test
+	public void fileUriTests() throws Exception {
+		ACS acs = new ACS();
+		TableOfContents tableOfContents = acs.createNextTableOfContents();
+		String fileUri = "file:A01.fcs";
+		File newFile = TestUtils.testFile();
+		
+		String testString = FileUtils.fileToString(newFile);
+		
+		tableOfContents.createFileResourceIdentifier(fileUri, newFile);
+		
+		TableOfContents reloadedTableOfContents = TestUtils.writeOutTableOfContentsAndReload(tableOfContents);
+		
+		FileResourceIdentifier reloadedFileResourceIdentifier = reloadedTableOfContents.getFileResourceIdentifierByUri(fileUri);
+
+		String reloadedTestString = reloadedFileResourceIdentifier.writeRepresentedFileToString();
+		assertEquals("A FileResourceIdentifier should be able to be written to an ACS container with a URI that has no slashes and reloaded as such.", testString, reloadedTestString);
 		
 	}
 	

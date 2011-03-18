@@ -165,10 +165,7 @@ public class TableOfContentsTest {
 		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile3), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri3).writeRepresentedFileToString());
 		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile4), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri4).writeRepresentedFileToString());
 		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile5), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri5).writeRepresentedFileToString());
-		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile6), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri6).writeRepresentedFileToString());
-
-		
-		
+		assertEquals("The contents of the reloaded tableOfContents should match", FileUtils.fileToString(newFile6), reloadedTableOfContents.getFileResourceIdentifierByUri(stringUri6).writeRepresentedFileToString());		
 	}
 	
 	@Test
@@ -191,6 +188,16 @@ public class TableOfContentsTest {
 			String md5sum = TestUtils.md5sum(targetFile);
 			
 			assertEquals("Checking MD5sum for " + fileResource.getUri().toString(), EXPECTED_U937_MD5SUMS[i], md5sum);
+		}
+	}
+	
+	@Test
+	public void getFcsFiles() throws Exception {
+		TableOfContents tableOfContents = TestUtils.getAcsV2().getTableOfContents();
+		FileResourceIdentifier[] fileResources = tableOfContents.getFcsFiles();
+		
+		for (int i=0; i<EXPECTED_U937_URIS.length; i++) {
+			assertEquals(EXPECTED_U937_URIS[i], fileResources[i].getUri().toString());
 		}
 	}
 	

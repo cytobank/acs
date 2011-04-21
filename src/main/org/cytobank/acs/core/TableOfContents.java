@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -248,7 +249,7 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 	 * Returns an array of all the <code>FileResourceIdentifier</code>s contained within this <code>TableOfContents</code> instance 
 	 * that represent FCS files.
 	 * 
-	 * @return an array of all the <code>FileResourceIdentifier</code>s
+	 * @return an array of all the <code>FileResourceIdentifier</code>s that are fcs files.
 	 */
 	public FileResourceIdentifier[] getFcsFiles() {
 		Vector<FileResourceIdentifier> fcsFiles = new Vector<FileResourceIdentifier>();
@@ -261,6 +262,37 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 		
 		FileResourceIdentifier[] results = new FileResourceIdentifier[fcsFiles.size()];
 		fileResourceIdentifiers.toArray(results);
+		
+		return results;
+	}
+
+	
+	
+	/**
+	 * Returns an array of all unique <code>FileResourceIdentifier</code>s contained within this <code>TableOfContents</code> instance
+	 * that have been identified as project workspaces.
+	 * 
+	 * @return an array of all the <code>FileResourceIdentifier</code>s that are project workspaces
+	 * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code> 
+	 * @throws URISyntaxException If there is a problem with any of the URIs contained within the <code>TableOfContents</code> or if the URI is a duplicate
+	 * @throws InvalidAssociationException if there is an invalid association
+	 * @see RelationshipTypes#isProjectWorkspace
+	 */
+	public FileResourceIdentifier[] getProjectWorkspaces() throws InvalidAssociationException, InvalidIndexException, URISyntaxException {
+		HashSet<FileResourceIdentifier> projectWorkspaces = new HashSet<FileResourceIdentifier>();
+		
+		// Find all fileResource associations and add the associated file to projectWorkspaces
+		// if that association relationship is a project workspace.
+		for (FileResourceIdentifier fileResource : fileResourceIdentifiers) {
+			for (Association association : fileResource.associations) {
+				if (RelationshipTypes.isProjectWorkspace(association.getRelationship())) {
+					projectWorkspaces.add(association.getAssociatedTo());
+				}
+			}
+		}
+		
+		FileResourceIdentifier[] results = new FileResourceIdentifier[projectWorkspaces.size()];
+		projectWorkspaces.toArray(results);
 		
 		return results;
 	}

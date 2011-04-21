@@ -38,6 +38,13 @@ public class TableOfContentsTest {
 	static final String MY_NEW_FILE = "/my_new_file";
 	static final String MY_NEW_FILE_PATH = "file://" + MY_NEW_FILE;
 	
+	static final String MY_NEW_FILE2 = "/my_new_file2";
+	static final String MY_NEW_FILE_PATH2 = "file://" + MY_NEW_FILE2;
+
+	static final String MY_NEW_FILE3 = "/my_new_file3";
+	static final String MY_NEW_FILE_PATH3 = "file://" + MY_NEW_FILE3;
+
+	
 	static final String[] EXPECTED_U937_URIS = new String[]{
 			"file:///20071001-u937.001",
 			"file:///20071001-u937.002",
@@ -485,6 +492,56 @@ public class TableOfContentsTest {
 		TableOfContents reloadedTableOfContents2 = TestUtils.writeOutTableOfContentsAndReload(reloadedTableOfContents);
 		assertEquals("FileResourceIdentifier.getFileResourceByUri should not return a removed FileResourceIdentifier", null, reloadedTableOfContents2.getFileResourceIdentifierByUri(MY_NEW_FILE_PATH));
 		assertEquals("FileResourceIdentifier.getFileResourceByUri should not return a removed FileResourceIdentifier", null, reloadedTableOfContents2.getFileResourceIdentifierByUri(addedThenRemoved));
+	}
+	
+	@Test
+	public void testGetProjectWorkspaces() throws Exception {
+		ACS acsV2 = TestUtils.getAcsV2();
+
+		File newFile  = TestUtils.testFile();
+		File newFile2 = TestUtils.testFile();
+
+		File newFile3 = TestUtils.testFile();
+
+		
+		TableOfContents newToc = acsV2.createNextTableOfContents();
+		
+		assertTrue("TableOfContents.getProjectWorkspaces should return no results if there are no workspace files", newToc.getProjectWorkspaces().length == 0);
+		
+		FileResourceIdentifier fileResourceIdentifier = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH, newFile);
+		
+		FileResourceIdentifier fileResourceIdentifier2 = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH2, newFile2);
+
+		FileResourceIdentifier associatedLocalFileResourceIdentifier = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH3, newFile3);
+
+		
+		// Create an association from localFileResourceIdentifier to associatedLocalFileResourceIdentifier
+		fileResourceIdentifier.createAssociation(associatedLocalFileResourceIdentifier, RelationshipTypes.PROJECT_WORKSPACE);
+
+
+		// Create a second association from another localFileResourceIdentifier to the same associatedLocalFileResourceIdentifier
+		fileResourceIdentifier2.createAssociation(associatedLocalFileResourceIdentifier, RelationshipTypes.PROJECT_WORKSPACE);
+
+		newToc = TestUtils.writeOutTableOfContentsAndReload(newToc);
+		
+		FileResourceIdentifier reloadedTempFileResourceIdentifier = newToc.getFileResourceIdentifierByUri(MY_NEW_FILE_PATH);
+		
+		Association[] tempFileResourceIdentifierAssociations = reloadedTempFileResourceIdentifier.getAssociations();
+		
+		assertTrue(tempFileResourceIdentifierAssociations.length == 1);
+		
+		Association tempFileResourceIdentifierAssociation = tempFileResourceIdentifierAssociations[0];
+				
+		assertEquals("The RelationshipType of the saved association should be retained.", RelationshipTypes.PROJECT_WORKSPACE, tempFileResourceIdentifierAssociation.getRelationship());		
+	
+		assertEquals("Association.getAssociatedUriTo should return the URI to the FileResourceIdentifier that the association is to", new URI(MY_NEW_FILE_PATH3), tempFileResourceIdentifierAssociation.getAssociatedUriTo());
+	
+		FileResourceIdentifier associatedTempFileResourceIdentifier = tempFileResourceIdentifierAssociation.getAssociatedTo();
+		assertEquals("Association.getAssociatedTo() should return the FileResourceIdentifier that the Accoiation points to", new URI(MY_NEW_FILE_PATH3), associatedTempFileResourceIdentifier.getUri());
+
+		assertTrue("TableOfContents.getProjectWorkspaces should return all FileResourceIdentifiers that are associated as workspaces without any duplicates.", newToc.getProjectWorkspaces().length == 1);
+
+		assertEquals("TableOfContents.getProjectWorkspaces should return all FileResourceIdentifiers that are associated as workspaces.", associatedTempFileResourceIdentifier, newToc.getProjectWorkspaces()[0]);
 	}
 	
 	@After

@@ -544,6 +544,122 @@ public class TableOfContentsTest {
 		assertEquals("TableOfContents.getProjectWorkspaces should return all FileResourceIdentifiers that are associated as workspaces.", associatedTempFileResourceIdentifier, newToc.getProjectWorkspaces()[0]);
 	}
 	
+	@Test
+	public void testGetFileResourceIdentifiersAssociatedTo() throws Exception {
+		ACS acsV2 = TestUtils.getAcsV2();
+
+		File newFile  = TestUtils.testFile();
+		File newFile2 = TestUtils.testFile();
+
+		File newFile3 = TestUtils.testFile();
+
+		
+		TableOfContents newToc = acsV2.createNextTableOfContents();
+
+		FileResourceIdentifier fcsFilefileResourceIdentifier1 = newToc.getFileResourceIdentifierByUri("file:///20071001-u937.004");
+		FileResourceIdentifier fcsFilefileResourceIdentifier2 = newToc.getFileResourceIdentifierByUri("file:///20071001-u937.007");
+
+		FileResourceIdentifier workspaceFileResourceIdentifier = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH, newFile);
+		FileResourceIdentifier signatureFileResourceIdentifier2 = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH2, newFile2);
+		FileResourceIdentifier fileResourceIdentifier3 = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH3, newFile3);
+
+		assertTrue("getFcsFilesAssociatedTo should return no results if there are no workspace files associated to it.", newToc.getFcsFilesAssociatedTo(workspaceFileResourceIdentifier).length == 0);
+		
+		
+		
+		// Create two separate associations from FCS files to workspaces
+		fcsFilefileResourceIdentifier1.createAssociation(workspaceFileResourceIdentifier, RelationshipTypes.PROJECT_WORKSPACE);
+
+		fcsFilefileResourceIdentifier2.createAssociation(signatureFileResourceIdentifier2, RelationshipTypes.DIGITAL_SIGNATURE);
+
+		newToc = TestUtils.writeOutTableOfContentsAndReload(newToc);
+		
+		fcsFilefileResourceIdentifier1 = newToc.getFileResourceIdentifierByUri("file:///20071001-u937.004");
+		fcsFilefileResourceIdentifier2 = newToc.getFileResourceIdentifierByUri("file:///20071001-u937.007");
+
+		assertNotNull("Sanity check.", fcsFilefileResourceIdentifier1);
+		assertNotNull("Sanity check.", fcsFilefileResourceIdentifier2);
+		
+		workspaceFileResourceIdentifier = newToc.getFileResourceIdentifierByUri(MY_NEW_FILE_PATH);
+		signatureFileResourceIdentifier2 = newToc.getFileResourceIdentifierByUri(MY_NEW_FILE_PATH2);
+		fileResourceIdentifier3 = newToc.getFileResourceIdentifierByUri(MY_NEW_FILE_PATH3);
+
+		
+		FileResourceIdentifier[] associatedToFileResourceIdentifiers = newToc.getFileResourceIdentifiersAssociatedTo(workspaceFileResourceIdentifier);
+		FileResourceIdentifier[] associatedToFileResourceIdentifiers2 = newToc.getFileResourceIdentifiersAssociatedTo(signatureFileResourceIdentifier2);
+
+		
+		assertTrue("TableOfContents.getFileResourceIdentifiersAssociatedTo should return the correct number of FileResourceIdentifiers associated with another FileResourceIdentifier", associatedToFileResourceIdentifiers.length == 1);
+		assertEquals("TableOfContents.getFileResourceIdentifiersAssociatedTo should return the correct FileResourceIdentifiers associated with another FileResourceIdentifier", fcsFilefileResourceIdentifier1, associatedToFileResourceIdentifiers[0]);
+
+		assertTrue("TableOfContents.getFcsFilesAssociatedTo should return the correct number of FileResourceIdentifiers associated with another FileResourceIdentifier", associatedToFileResourceIdentifiers2.length == 1);
+		assertEquals("TableOfContents.getFcsFilesAssociatedTo should return the correct FileResourceIdentifiers associated with another FileResourceIdentifier", fcsFilefileResourceIdentifier2,associatedToFileResourceIdentifiers2[0]);
+		
+		
+		assertTrue("TableOfContents.getFileResourceIdentifiersAssociatedTo should return no FileResourceIdentifiers if there are no associations", newToc.getFcsFilesAssociatedTo(fileResourceIdentifier3).length == 0);
+
+		assertNull("TableOfContents.getFileResourceIdentifiersAssociatedTo should return null if given a null paramater", newToc.getFcsFilesAssociatedTo(null));
+
+	}
+	
+	@Test
+	public void testGetFcsFilesAssociatedTo() throws Exception {
+		ACS acsV2 = TestUtils.getAcsV2();
+
+		File newFile  = TestUtils.testFile();
+		File newFile2 = TestUtils.testFile();
+
+		File newFile3 = TestUtils.testFile();
+
+		
+		TableOfContents newToc = acsV2.createNextTableOfContents();
+
+		FileResourceIdentifier fcsFilefileResourceIdentifier1 = newToc.getFileResourceIdentifierByUri("file:///20071001-u937.004");
+		FileResourceIdentifier fcsFilefileResourceIdentifier2 = newToc.getFileResourceIdentifierByUri("file:///20071001-u937.007");
+
+		FileResourceIdentifier workspaceFileResourceIdentifier = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH, newFile);
+		FileResourceIdentifier signatureFileResourceIdentifier2 = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH2, newFile2);
+		FileResourceIdentifier fileResourceIdentifier3 = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH3, newFile3);
+
+		assertTrue("getFcsFilesAssociatedTo should return no results if there are no workspace files associated to it.", newToc.getFcsFilesAssociatedTo(workspaceFileResourceIdentifier).length == 0);
+		
+		
+		
+		// Create two separate associations from FCS files to workspaces
+		fcsFilefileResourceIdentifier1.createAssociation(workspaceFileResourceIdentifier, RelationshipTypes.PROJECT_WORKSPACE);
+
+		fcsFilefileResourceIdentifier2.createAssociation(signatureFileResourceIdentifier2, RelationshipTypes.DIGITAL_SIGNATURE);
+
+		newToc = TestUtils.writeOutTableOfContentsAndReload(newToc);
+		
+		fcsFilefileResourceIdentifier1 = newToc.getFileResourceIdentifierByUri("file:///20071001-u937.004");
+		fcsFilefileResourceIdentifier2 = newToc.getFileResourceIdentifierByUri("file:///20071001-u937.007");
+
+		assertNotNull("Sanity check.", fcsFilefileResourceIdentifier1);
+		assertNotNull("Sanity check.", fcsFilefileResourceIdentifier2);
+		
+		workspaceFileResourceIdentifier = newToc.getFileResourceIdentifierByUri(MY_NEW_FILE_PATH);
+		signatureFileResourceIdentifier2 = newToc.getFileResourceIdentifierByUri(MY_NEW_FILE_PATH2);
+		fileResourceIdentifier3 = newToc.getFileResourceIdentifierByUri(MY_NEW_FILE_PATH3);
+
+		
+		FileResourceIdentifier[] associatedToFileResourceIdentifiers = newToc.getFcsFilesAssociatedTo(workspaceFileResourceIdentifier);
+		FileResourceIdentifier[] associatedToFileResourceIdentifiers2 = newToc.getFcsFilesAssociatedTo(signatureFileResourceIdentifier2);
+
+		
+		assertTrue("TableOfContents.getFcsFilesAssociatedTo should return the correct number of FCS files associated with another FileResourceIdentifier", associatedToFileResourceIdentifiers.length == 1);
+		assertEquals("TableOfContents.getFcsFilesAssociatedTo should return the correct FCS files associated with another FileResourceIdentifier", fcsFilefileResourceIdentifier1, associatedToFileResourceIdentifiers[0]);
+
+		assertTrue("TableOfContents.getFcsFilesAssociatedTo should return the correct number of FCS files associated with another FileResourceIdentifier", associatedToFileResourceIdentifiers2.length == 1);
+		assertEquals("TableOfContents.getFcsFilesAssociatedTo should return the correct FCS files associated with another FileResourceIdentifier", fcsFilefileResourceIdentifier2,associatedToFileResourceIdentifiers2[0]);
+		
+		
+		assertTrue("TableOfContents.getFcsFilesAssociatedTo should return no FCS files if there are no associations", newToc.getFcsFilesAssociatedTo(fileResourceIdentifier3).length == 0);
+
+		assertNull("TableOfContents.getFcsFilesAssociatedTo should return null if given a null paramater", newToc.getFcsFilesAssociatedTo(null));
+
+	}
+	
 	@After
 	public void tearDown() throws Exception {
 	}

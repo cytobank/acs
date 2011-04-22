@@ -244,6 +244,36 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 		fileResourceIdentifiers.toArray(results);
 		return results;
 	}
+
+	/**
+	 * Returns an array of all the <code>FileResourceIdentifier</code>s contained within this <code>TableOfContents</code> instance that are associated to
+	 * another FileResourceIdentifier.
+	 * <p>
+	 * This method essentially takes all <code>FileResourceIdentifier</code>s and filters them down to the results that have an association with the specified
+	 * <code>associatedTo</code> <code>FileResourceIdentifier</code>.  This is particularly useful if all <code>FileResourceIdentifier</code>s are needed for a specific workspace. 
+	 *
+	 * @return an array of all the <code>FileResourceIdentifier</code>s
+	 */
+	public FileResourceIdentifier[] getFileResourceIdentifiersAssociatedTo(FileResourceIdentifier associatedTo) throws InvalidAssociationException, InvalidIndexException, URISyntaxException {
+		if (associatedTo == null)
+			return null;
+		
+		
+		Vector<FileResourceIdentifier> associatedFileResourceIdentifiers = new Vector<FileResourceIdentifier>();
+		
+		for (FileResourceIdentifier fileResource : fileResourceIdentifiers) {
+			for (Association association : fileResource.associations) {
+				if (associatedTo.equals(association.getAssociatedTo())) {
+					associatedFileResourceIdentifiers.add(fileResource);
+					break;
+				}
+			}
+		}
+		
+		FileResourceIdentifier[] results = new FileResourceIdentifier[associatedFileResourceIdentifiers.size()];
+		associatedFileResourceIdentifiers.toArray(results);
+		return results;
+	}
 		
 	/**
 	 * Returns an array of all the <code>FileResourceIdentifier</code>s contained within this <code>TableOfContents</code> instance 
@@ -267,6 +297,41 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 	}
 
 	
+	/**
+	 * Returns an array of all the <code>FileResourceIdentifier</code>s contained within this <code>TableOfContents</code> instance 
+	 * that represent FCS files with an association to a particular <code>FileResourceIdentifier</code>.
+	 * <p>
+	 * This method is particularly useful when all FCS files associated with a given workspace FileResourceIdentifier are needed.
+	 * 
+	 * @return an array of all the <code>FileResourceIdentifier</code>s that are FCS files, or <code>null</code> if <code>associatedTo</code> parameter
+	 *         is <code>null</code>.
+	 * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code> 
+	 * @throws URISyntaxException If there is a problem with any of the URIs contained within the <code>TableOfContents</code> or if the URI is a duplicate
+	 * @throws InvalidAssociationException if there is an invalid association
+	 */
+	public FileResourceIdentifier[] getFcsFilesAssociatedTo(FileResourceIdentifier associatedTo) throws InvalidAssociationException, InvalidIndexException, URISyntaxException {
+		if (associatedTo == null)
+			return null;
+		
+		Vector<FileResourceIdentifier> fcsFiles = new Vector<FileResourceIdentifier>();
+		
+		for (FileResourceIdentifier fileResource : fileResourceIdentifiers) {
+			if (fileResource.isFcsFile()) {
+				for (Association association : fileResource.associations) {
+					if (associatedTo.equals(association.getAssociatedTo())) {
+						fcsFiles.add(fileResource);
+						break;
+					}
+				}
+			}
+		}
+		
+		FileResourceIdentifier[] results = new FileResourceIdentifier[fcsFiles.size()];
+		fcsFiles.toArray(results);
+		
+		return results;
+	}
+
 	
 	/**
 	 * Returns an array of all unique <code>FileResourceIdentifier</code>s contained within this <code>TableOfContents</code> instance

@@ -31,7 +31,7 @@ import java.util.zip.ZipInputStream;
 
 public class FileUtils {
 	/** The buffer size in bytes to create when copying streams. */
-	public static final int BYTE_BUFFER_SIZE = 102400;
+	public static final int BYTE_BUFFER_SIZE = 1024000;
 
 	/**
 	 * Copies one file to another.
@@ -97,6 +97,27 @@ public class FileUtils {
 		while ((read = inputStream.read(byteBuffer, 0, BYTE_BUFFER_SIZE)) > 0) {
 			outputStream.write(byteBuffer, 0, read); 
 			written += read;
+		}
+		
+		return written;
+	}
+	
+	/**
+	 * Writes an <code>InputStream</code> to an <code>File</code>.
+	 * 
+	 * @param inputStream the <code>InputStream</code> to read
+	 * @param targetFile the <code>File</code> to write to
+	 * @return the number of bytes written
+	 * @throws IOException If an input or output exception occurred
+	 */
+	public static long writeInputStreamToFile(InputStream inputStream, File targetFile) throws IOException {
+		long written = 0;
+		
+		FileOutputStream fileOutputStream = new FileOutputStream(targetFile);
+		try {
+			written = writeInputStreamToOutputStream(inputStream, fileOutputStream);
+		} finally {
+			fileOutputStream.close();
 		}
 		
 		return written;

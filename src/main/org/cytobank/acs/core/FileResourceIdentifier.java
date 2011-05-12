@@ -21,6 +21,7 @@ package org.cytobank.acs.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,6 +71,13 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 */ 
 	protected InputStream sourceFileStream;
 	
+	/**  
+	 * The (optional) <code>File</code> pointing to the represented file.  If this is set to null, it is assumed
+	 * either that the represented file exists in a previous ACS container, or is an external URL resource which means it won't live
+	 * in the ACS container to be written to.
+	 */ 
+	protected File sourceFile;
+	
 	/**
 	 * Keeps track if the {@link FileResourceIdentifier#sourceInputStreamReadFrom} has been read from.
 	 */
@@ -108,6 +116,32 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 		this(tableOfContents, tableOfContents.createElement(Constants.FILE_ELEMENT));
 		this.sourceFileStream = sourceFileStream;
 	}
+	
+
+	/**
+	 * Creates a new <code>FileResourceIdentifier</code> instance from a <code>File</code>.
+	 * <p>
+	 * NOTE: The preferred method to create a <code>FileResourceIdentifier</code> is to use the 
+	 * {@link TableOfContents#createFileResourceIdentifier} method on an existing <code>TableOfContents</code>.
+	 * <p>
+	 * This constructor sets <code>this.sourceFile</code> to the specified <code>File</code>
+	 * and will cause the <code>hasSourceFile()</code> method to return <code>true</code>, which will indicate
+	 * that when this new instance of <code>FileResourceIdentifier</code> is being written to a new ACS container that
+	 * the file this <code>FileResourceIdentifier</code> represents will have to be pulled in from the <code>sourceFile</code>
+	 * as opposed to existing in a previous ACS container, in which it is copied, or from an external URL resource which means it won't live
+	 * in the ACS container to be written to.
+	 * 
+	 * @param tableOfContents the <code>TableOfContents</code> instance that the created <code>FileResourceIdentifier</code> will be owned by 
+	 * @param sourceFile the <code>File</code> pointing to the represented file of the created <code>FileResourceIdentifier</code>
+	 * @throws InvalidAssociationException if there is an invalid association exception
+	 * @see TableOfContents#createFileResourceIdentifier
+	 * @see FileResourceIdentifier#hasSourceFile
+	 */
+	public FileResourceIdentifier(TableOfContents tableOfContents, File sourceFile) throws InvalidAssociationException {
+		this(tableOfContents, tableOfContents.createElement(Constants.FILE_ELEMENT));
+		this.sourceFile = sourceFile;
+	}
+	
 	
 	/**
 	 * Creates a new or existing <code>FileResourceIdentifier</code> instance from an xml <code>org.w3c.dom.Element</code>.
@@ -432,7 +466,18 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 			} finally {
 				this.sourceInputStreamReadFrom = true;
 			}
-		} else {
+		} else if (hasSourceFile()) {	
+
+			FileInputStream fileInputStream = new FileInputStream(sourceFile);
+			
+			try {
+				FileUtils.writeInputStreamToOutputStream(fileInputStream, outputStream);
+			} finally {
+				fileInputStream.close();
+			}
+			
+			
+		} else  {
 			ACS acs = getAcs();
 			acs.extractFile(getUri(), outputStream);
 		}
@@ -495,15 +540,35 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	public boolean hasSourceInputStream() {
 		return sourceFileStream != null;
 	}
+
+	
+	/**
+	 * Returns <code>true</code> if the file that this <code>FileResourceIdentifier</code> represents source exists outside the ACS container as a source stream.
+     * This will happen if this was a newly added <code>FileResourceIdentifier</code> and has not yet been written to a new ACS container.
+     * 
+	 * @return <code>true</code> if the file that this <code>FileResourceIdentifier</code> represents source exists outside the ACS container, <code>false</code> otherwise
+	 */
+	public boolean hasSourceFile() {
+		return sourceFile != null;
+	}
 	
 	/**
 	 * Returns the <code>InputStream</code> to the file that this <code>FileResourceIdentifier</code> represents source exists outside the ACS container as a source stream.
 	 * 
 	 * @return the <code>InputStream</code> to the file that this <code>FileResourceIdentifier</code> represents source exists outside the ACS container as a source stream,
 	 * or <code>null</code> if one does not exist.
+	 * @throws IOException if there is no sourceInputStream available as either a stream or file
 	 */
-	public InputStream getSourceInputStream() {
-		return sourceFileStream;
+	public InputStream getSourceInputStream() throws IOException {
+		
+		if(hasSourceInputStream()){
+			return sourceFileStream;	
+		} else if(hasSourceFile()) {
+			return new FileInputStream(sourceFile);
+		} else {
+			throw new IOException("No Source Input Stream Available.");
+		}
+				
 	}
 		
 	/**

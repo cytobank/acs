@@ -20,6 +20,7 @@
 package org.cytobank.acs.core;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.URI;
 
 import org.junit.*;
@@ -209,7 +210,7 @@ public class TableOfContentsTest {
 	}
 	
 	@Test
-	public void addFileResource() throws Exception {
+	public void addFileResourceWithInputStream() throws Exception {
 		File newFile = TestUtils.testFile();
 
 		ACS acsV2 = TestUtils.getAcsV2();
@@ -218,15 +219,19 @@ public class TableOfContentsTest {
 		
 		String newFileName = "file:///my_new_file";
 		
-		FileResourceIdentifier fileResourceIdentifier = newToc.createFileResourceIdentifier(new URI(newFileName), newFile);
+		FileInputStream fileInputStream = new FileInputStream(newFile);
 		
-		assertTrue("Any added fileResourceIdentifier should return true on hasSourceInputStream", fileResourceIdentifier.hasSourceInputStream());
+		FileResourceIdentifier fileResourceIdentifier = newToc.createFileResourceIdentifier(new URI(newFileName), fileInputStream);
+		
+		assertTrue("Any added fileResourceIdentifier created with a InputStream should return true on hasSourceInputStream", fileResourceIdentifier.hasSourceInputStream());
+		assertFalse("Any added fileResourceIdentifier created with a InputStream should return false on hasSourceFile", fileResourceIdentifier.hasSourceFile());		
 		
 		assertEquals((Integer) 3, (Integer) acsV2.getCurrentVersion());
 		
 		assertTrue("my_new_file should have been added to the table of content's xml", newToc.toXml().indexOf("<toc:file toc:URI=\"file:///my_new_file\"/>") > -1);
 	}
 
+	@Test
 	public void addFileResourceWithoutUrlFilePrefix() throws Exception {
 		File newFile = TestUtils.testFile();
 		
@@ -263,12 +268,31 @@ public class TableOfContentsTest {
 		assertEquals((Integer) 3, (Integer) acsV2.getCurrentVersion());
 
 		assertTrue("my_new_file should have been added to the table of content's xml", newToc.toXml().indexOf("<toc:file toc:URI=\"file:///my_new_file\" toc:mimeType=\"text/plain\"/>") != -1);
-
 		
 		assertEquals("The MIME type of a saved FileResourceIdentifier should be the same after a reload", "text/plain", TestUtils.writeOutFileResourceIdentifierAndReload(fileResourceIdentifier).getMimeType());
 		
 	}
 	
+	@Test
+	public void addFileResourceWithFileSource() throws Exception {
+		File newFile = TestUtils.testFile();
+
+		ACS acsV2 = TestUtils.getAcsV2();
+		
+		TableOfContents newToc = acsV2.createNextTableOfContents();
+		
+		String newFileName = "file:///my_new_file";
+			
+		FileResourceIdentifier fileResourceIdentifier = newToc.createFileResourceIdentifier(new URI(newFileName), newFile);
+		
+		assertFalse("Any added fileResourceIdentifier created with a File should return false on hasSourceInputStream", fileResourceIdentifier.hasSourceInputStream());
+		assertTrue("Any added fileResourceIdentifier created with a File should return true on hasSourceFile", fileResourceIdentifier.hasSourceFile());		
+		
+		assertEquals((Integer) 3, (Integer) acsV2.getCurrentVersion());
+		
+		assertTrue("my_new_file should have been added to the table of content's xml", newToc.toXml().indexOf("<toc:file toc:URI=\"file:///my_new_file\"/>") > -1);
+	}
+		
 	@Test
 	public void testDuplicateFileResourceIdentifierException() throws Exception {
 		ACS acsV2 = TestUtils.getAcsV2();

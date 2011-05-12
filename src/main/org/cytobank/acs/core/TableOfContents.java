@@ -449,12 +449,24 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 	 * @throws InvalidFileResourceUriSchemeException if the resourcePath <code>URI</code> contains a scheme that is not allowed according to the ACS specification.
 	 * @throws DuplicateFileResourceIdentifierException If any of the URIs contained within the <code>TableOfContents</code> is a duplicate 
 	 */
-	public FileResourceIdentifier createFileResourceIdentifier(URI resourcePath, File sourceFile) throws InvalidIndexException, URISyntaxException, IOException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
-		FileInputStream sourceFileStream = new FileInputStream(sourceFile);
-		FileResourceIdentifier fileResource = createFileResourceIdentifier(resourcePath, sourceFileStream);
+//	public FileResourceIdentifier createFileResourceIdentifier(URI resourcePath, File sourceFile) throws InvalidIndexException, URISyntaxException, IOException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
+//		FileResourceIdentifier fileResource = createFileResourceIdentifier(resourcePath, sourceFile);
+//		return fileResource;
+//	}
+
+	/** TODO */
+	public FileResourceIdentifier createFileResourceIdentifier(URI resourcePath, File sourceFile) throws InvalidIndexException, URISyntaxException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
+		FileResourceIdentifier fileResource = new FileResourceIdentifier(this, sourceFile);
+		fileResource.setUri(resourcePath);
+		trackFileResourceIdentifier(fileResource);
+		
+		// Now add the xml element that fileResource represents to this instance of TableOfContents's xml element
+		element.appendChild(fileResource.element);
 		return fileResource;
 	}
-
+	
+	
+	
 	/**
 	 * Creates a new <code>FileResourceIdentifier</code> that will be owned by this <code>TableOfContents</code> from an <code>InputStream</code>. The
 	 * <code>sourceFileStream</code> parameter will not be used until {@link FileResourceIdentifier#writeRepresentedFile} is called, which happens on

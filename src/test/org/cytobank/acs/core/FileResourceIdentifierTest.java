@@ -306,6 +306,69 @@ public class FileResourceIdentifierTest {
 	}
 	
 	@Test
+	public void testDoubleWriteOfNewResource() throws Exception {
+		ACS acsV2 = TestUtils.getAcsV2();
+		TableOfContents newToc = acsV2.createNextTableOfContents();
+		
+		File newFile = TestUtils.testFile();
+		FileResourceIdentifier localFileResourceIdentifier = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH, newFile);
+				
+		File writtenFile = File.createTempFile("write_test", "tmp");
+		localFileResourceIdentifier.writeRepresentedFile(writtenFile);
+		assertEquals(TestUtils.md5sum(newFile), TestUtils.md5sum(writtenFile));
+
+		File writtenFile2 = File.createTempFile("write_test", "tmp");
+		localFileResourceIdentifier.writeRepresentedFile(writtenFile2);
+		assertEquals(TestUtils.md5sum(newFile), TestUtils.md5sum(writtenFile2));
+	}
+	
+	@Test
+	public void testWriteOfNewResourceThenWriteAcs() throws Exception {
+		ACS acsV2 = TestUtils.getAcsV2();
+		TableOfContents newToc = acsV2.createNextTableOfContents();
+		
+		File newFile = TestUtils.testFile();
+		FileResourceIdentifier localFileResourceIdentifier = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH, newFile);
+				
+		File writtenFile = File.createTempFile("write_test", "tmp");
+		localFileResourceIdentifier.writeRepresentedFile(writtenFile);
+		assertEquals(TestUtils.md5sum(newFile), TestUtils.md5sum(writtenFile));
+
+		File newAcs = File.createTempFile("new_acs", "tmp");
+		acsV2.writeAcsContainer(newAcs);
+	}
+
+	@Test
+	public void testWriteRepresentedFileToStringTwice() throws Exception {
+		ACS acsV2 = TestUtils.getAcsV2();
+		TableOfContents newToc = acsV2.createNextTableOfContents();
+		
+		File newFile = TestUtils.testFile();
+		FileResourceIdentifier localFileResourceIdentifier = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH, newFile);
+				
+		assertEquals(localFileResourceIdentifier.writeRepresentedFileToString(), localFileResourceIdentifier.writeRepresentedFileToString());
+	}
+
+	
+	@Test
+	public void testWriteRepresentedFileToStringThenWriteAcs() throws Exception {
+		ACS acs = new ACS();
+		TableOfContents newToc = acs.createNextTableOfContents();
+		
+		File newFile = TestUtils.testFile();
+		FileResourceIdentifier localFileResourceIdentifier = newToc.createFileResourceIdentifier(MY_NEW_FILE_PATH, newFile);
+				
+		localFileResourceIdentifier.writeRepresentedFileToString();
+
+		File writtenFile = File.createTempFile("write_test", "tmp");
+		localFileResourceIdentifier.writeRepresentedFile(writtenFile);
+		assertEquals(TestUtils.md5sum(newFile), TestUtils.md5sum(writtenFile));
+		
+		File newAcs = File.createTempFile("new_acs", "tmp");
+		acs.writeAcsContainer(newAcs);
+	}
+	
+	@Test
 	public void testHasAssociations() throws Exception { 
 		ACS acsV2 = TestUtils.getAcsV2();
 

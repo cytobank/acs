@@ -262,9 +262,7 @@ public class TableOfContentsTest {
 		String newFileName = "file:///my_new_file";
 		
 		FileResourceIdentifier fileResourceIdentifier = newToc.createFileResourceIdentifier(new URI(newFileName), newFile, "text/plain");
-		
-		assertTrue("Any added fileResourceIdentifier should return true on hasSourceInputStream", fileResourceIdentifier.hasSourceInputStream());
-		
+				
 		assertEquals((Integer) 3, (Integer) acsV2.getCurrentVersion());
 
 		assertTrue("my_new_file should have been added to the table of content's xml", newToc.toXml().indexOf("<toc:file toc:URI=\"file:///my_new_file\" toc:mimeType=\"text/plain\"/>") != -1);

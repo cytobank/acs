@@ -49,6 +49,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import org.apache.commons.lang.StringUtils;
 import org.cytobank.acs.core.exceptions.DuplicateFileResourceIdentifierException;
 import org.cytobank.acs.core.exceptions.InvalidAssociationException;
 import org.cytobank.acs.core.exceptions.InvalidFileResourceUriSchemeException;
@@ -449,7 +450,7 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 	 * @throws InvalidFileResourceUriSchemeException if the resourcePath <code>URI</code> contains a scheme that is not allowed according to the ACS specification.
 	 * @throws DuplicateFileResourceIdentifierException If any of the URIs contained within the <code>TableOfContents</code> is a duplicate 
 	 */
-	public FileResourceIdentifier createFileResourceIdentifier(URI resourcePath, File sourceFile) throws InvalidIndexException, URISyntaxException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
+	public FileResourceIdentifier createFileResourceIdentifier(URI resourcePath, File sourceFile) throws InvalidIndexException, URISyntaxException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException, IOException {
 		FileResourceIdentifier fileResource = new FileResourceIdentifier(this, sourceFile);
 		fileResource.setUri(resourcePath);
 		trackFileResourceIdentifier(fileResource);
@@ -569,8 +570,9 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 	 * @see Constants#FCS_FILE_MIME_TYPE
 	 */
 	public FileResourceIdentifier createFileResourceIdentifier(URI resourcePath, File sourceFile, String mimeType) throws InvalidIndexException, URISyntaxException, IOException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
-		FileInputStream sourceFileStream = new FileInputStream(sourceFile);
-		FileResourceIdentifier fileResource = createFileResourceIdentifier(resourcePath, sourceFileStream, mimeType);
+		FileResourceIdentifier fileResource = createFileResourceIdentifier(resourcePath, sourceFile);
+		if (!StringUtils.isBlank(mimeType))
+			fileResource.setMimeType(mimeType);
 		return fileResource;
 	}
 

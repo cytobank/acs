@@ -134,11 +134,20 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 * @param tableOfContents the <code>TableOfContents</code> instance that the created <code>FileResourceIdentifier</code> will be owned by 
 	 * @param sourceFile the <code>File</code> pointing to the represented file of the created <code>FileResourceIdentifier</code>
 	 * @throws InvalidAssociationException if there is an invalid association exception
+	 * @throws IOException 
 	 * @see TableOfContents#createFileResourceIdentifier
 	 * @see FileResourceIdentifier#hasSourceFile
 	 */
-	public FileResourceIdentifier(TableOfContents tableOfContents, File sourceFile) throws InvalidAssociationException {
-		this(tableOfContents, tableOfContents.createElement(Constants.FILE_ELEMENT));
+	public FileResourceIdentifier(TableOfContents tableOfContents, File sourceFile) throws InvalidAssociationException, IOException {		
+		if (!sourceFile.isFile())
+			throw new IOException("Cannot create a FileResourceIdentifier with a source file that does not exist: " + sourceFile.getPath());
+
+		Element fileResourceIdentifierElement = tableOfContents.createElement(Constants.FILE_ELEMENT);
+		this.tableOfContents = tableOfContents;
+		this.element = fileResourceIdentifierElement;
+		
+		setupAssociations(tableOfContents, fileResourceIdentifierElement);
+		setupAdditionalInfo();
 		this.sourceFile = sourceFile;
 	}
 	
@@ -454,7 +463,7 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 */
 	// TODO extract remote file
 	public void writeRepresentedFile(OutputStream outputStream) throws IOException, InvalidIndexException, URISyntaxException {
-		// If a sourceInputStream is available, that means that this FileResorceInstance represents a file that
+		// If a sourceInputStream or a sourceFile is available, that means that this FileResorceInstance represents a file that
 		// has not yet been written to a zip file and needs to be extracted from an external source
 		if (hasSourceInputStream()) {
 			try {
@@ -462,18 +471,27 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 				if (this.sourceInputStreamReadFrom)
 					throw new IOException("sourceFileStream has already been read from");
 
-				FileUtils.writeInputStreamToOutputStream(sourceFileStream, outputStream);
+				try {
+					FileUtils.writeInputStreamToOutputStream(sourceFileStream, outputStream);
+				} catch (Exception e) {
+					throw new IOException("Could not write " + getUri() + " from source FileStream to OutputStream due to: " + e.getMessage());
+				}
 			} finally {
 				this.sourceInputStreamReadFrom = true;
 			}
 		} else if (hasSourceFile()) {	
 
-			FileInputStream fileInputStream = new FileInputStream(sourceFile);
-			
+			FileInputStream fileInputStream = null;
+
 			try {
+				fileInputStream = new FileInputStream(sourceFile);
+
 				FileUtils.writeInputStreamToOutputStream(fileInputStream, outputStream);
+			} catch (Exception e) {
+				throw new IOException("Could not write " + getUri() + " from source " + sourceFile.getPath() + " to OutputStream due to: " + e.getMessage());
 			} finally {
-				fileInputStream.close();
+				if (fileInputStream != null)
+					fileInputStream.close();
 			}
 			
 			
@@ -492,11 +510,18 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 * @throws URISyntaxException If there is a problem with any of the URIs
 	 */
 	public void writeRepresentedFile(File targetFile) throws IOException, InvalidIndexException, URISyntaxException {
-		FileOutputStream fileOutputStream = new FileOutputStream(targetFile);
+		FileOutputStream fileOutputStream = null;
+		try {
+			fileOutputStream = new FileOutputStream(targetFile);
+			
+		} catch (Exception e) {
+			throw new IOException("Could not open " +  targetFile + " to write " + getUri() + " due to " + e.getMessage());
+		}
 		try {
 			writeRepresentedFile(fileOutputStream);
 		} finally {
-			fileOutputStream.close();
+			if (fileOutputStream != null)
+				fileOutputStream.close();
 		}
 	}
 	
@@ -510,24 +535,9 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 */
 	// TODO extract remote file
 	public String writeRepresentedFileToString() throws IOException, InvalidIndexException, URISyntaxException {
-		// If a sourceInputStream is available, that means that this FileResorceInstance represents a file that
-		// has not yet been written to a zip file and needs to be extracted from an external source
-		if (hasSourceInputStream()) {
-			try {
-				// Do not allow the sourceInputStream to be read more than once
-				if (this.sourceInputStreamReadFrom)
-					throw new IOException("sourceFileStream has already been read from");
-
-				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();				
-				FileUtils.writeInputStreamToOutputStream(sourceFileStream, byteArrayOutputStream);
-				return byteArrayOutputStream.toString();
-			} finally {
-				this.sourceInputStreamReadFrom = true;
-			}
-		} else {
-			ACS acs = getAcs();
-			return acs.extractFileToString(getUri());
-		}
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();				
+		writeRepresentedFile(byteArrayOutputStream);
+		return byteArrayOutputStream.toString(); 
 	}
 
 	

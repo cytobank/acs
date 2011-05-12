@@ -449,12 +449,6 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 	 * @throws InvalidFileResourceUriSchemeException if the resourcePath <code>URI</code> contains a scheme that is not allowed according to the ACS specification.
 	 * @throws DuplicateFileResourceIdentifierException If any of the URIs contained within the <code>TableOfContents</code> is a duplicate 
 	 */
-//	public FileResourceIdentifier createFileResourceIdentifier(URI resourcePath, File sourceFile) throws InvalidIndexException, URISyntaxException, IOException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
-//		FileResourceIdentifier fileResource = createFileResourceIdentifier(resourcePath, sourceFile);
-//		return fileResource;
-//	}
-
-	/** TODO */
 	public FileResourceIdentifier createFileResourceIdentifier(URI resourcePath, File sourceFile) throws InvalidIndexException, URISyntaxException, InvalidAssociationException, InvalidFileResourceUriSchemeException, DuplicateFileResourceIdentifierException {
 		FileResourceIdentifier fileResource = new FileResourceIdentifier(this, sourceFile);
 		fileResource.setUri(resourcePath);

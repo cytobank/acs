@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
  * A constants class that defines the association types between <code>FileResourceIdentifier</code>s, as defined in the ACS specification:
  * <p>
  * <i>The value of the relationship attribute shall indicate the type of relation between the two files. ISAC 
- * is maintaining a registry of relation types (see below). If possible, one of the pre-defined relations should be http://flowcyt.sf.net/acs/latest.pdf  ACS Ð the Archival Cytometry Standard 
+ * is maintaining a registry of relation types (see below). If possible, one of the pre-defined relations should be http://flowcyt.sf.net/acs/latest.pdf  ACS â€“ the Archival Cytometry Standard 
  * Version 1.0, 101013 Warning: This is a Draft of an ISAC Candidate Recommendation  11
  * used using the exact relationship wording. If there is no suitable relationship for the required association in 
  * the ISAC registry, please submit a relationship type to the ISAC Data Standards Task Force; see 

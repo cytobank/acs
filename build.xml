@@ -1,6 +1,6 @@
 <project name="Cytobank ACS Library" default="dist" basedir=".">
   <!-- set global properties for this build --> 
-  <property name="app.version"         value="0.1-dev"/>
+  <property name="app.version"         value="0.2-dev"/>
 
   <property name="app.name"            value="cytobank-acs"/>
   <property name="src.home"            value="${basedir}/src/main"/>

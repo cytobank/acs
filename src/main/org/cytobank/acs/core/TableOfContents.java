@@ -73,7 +73,7 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 	/** The xml <code>org.w3c.dom.Document</code> that this <code>TableOfContents</code> is associated with. */
 	protected Document tableOfContentsDoc;
 
-	/** The <code>FileResourceIdentifier</code> that this <code>TableOfContents</code> contains. */
+	/** The <code>FileResourceIdentifiers</code> that this <code>TableOfContents</code> contains. */
 	protected Vector<FileResourceIdentifier> fileResourceIdentifiers;
 
 	/** A <code>HashMap</code> indexing the list of <code>FileResourceIdentifier</code>s by a <String> uri. */
@@ -331,6 +331,43 @@ public class TableOfContents extends AdditionalInfoElementWrapper {
 
 		return results;
 	}
+
+    /**
+     * Returns an  <code>FileResourceIdentifier</code> contained within this <code>TableOfContents</code> instance
+     * that represent a gating files (optionally with an association to a particular <code>FileResourceIdentifier</code>).
+     * <p>
+     * This method is particularly useful when finding a gating ml associated with an experiment
+     * and if the file does not use a constant, unassociated, unversioned name (i.e. when importing newer, more compliant acs files)
+     *
+     * @return an <code>FileResourceIdentifier</code>s that is a gating ML
+     * @param  associatedTo if <code>associatedTo</code> parameter is <code>null</code>, will return first xml file of type "gating description" otherwise toc:with must match
+     * @throws InvalidIndexException If there is a problem with the <code>TableOfContents</code>
+     * @throws URISyntaxException If there is a problem with any of the URIs contained within the <code>TableOfContents</code> or if the URI is a duplicate
+     * @throws InvalidAssociationException if there is an invalid association
+     */
+    public FileResourceIdentifier getGatingFileAssociatedTo(FileResourceIdentifier associatedTo) throws InvalidAssociationException, InvalidIndexException, URISyntaxException {
+
+        new Vector<FileResourceIdentifier>();
+
+        for (FileResourceIdentifier fileResource : fileResourceIdentifiers) {
+            if (fileResource.isXMLFile()) {
+                for (Association association : fileResource.associations) {
+                    if (association.getRelationship().equals(RelationshipTypes.GATING_DESCRIPTION)) {
+                        if (associatedTo == null) {
+                            return fileResource;  // first anon match wins
+                        } else if (associatedTo.equals(association.getAssociatedTo())==true) {
+                            return fileResource;  // exact match (if provided) wins
+                        }
+                    }
+                }
+            }
+        }
+
+        // still here?  return null
+        return null;
+    }
+
+
 
 	/**
 	 * Returns an array of all unique <code>FileResourceIdentifier</code>s contained within this <code>TableOfContents</code> instance

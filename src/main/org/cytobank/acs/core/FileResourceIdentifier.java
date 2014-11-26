@@ -405,6 +405,19 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
         }
     }
 
+    /**
+     * Returns <code>true</code> if the file this <code>FileResourceIdentifier</code> represents is known to be an XML file by extension.
+     *
+     * @return <code>true</code> if the file this <code>FileResourceIdentifier</code> represents is known to be an XML file by extension, <code>false</code otherwise
+     */
+    public boolean isXMLFile() {
+        try {
+            URI uri = getUri();
+            return (uri != null && uri.getPath().toLowerCase().endsWith(Constants.XML_FILE_EXTENSION));
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 	/**
 	 * Returns the <code>ACS</code> object this <code>FileResourceIdentifier</code> is owned by.

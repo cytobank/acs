@@ -2,7 +2,7 @@
  *  This file is part the Cytobank ACS Library.
  *  Copyright (C) 2010 Cytobank, Inc.  All rights reserved.
  *
- *  The Cytobank ACS Library program is free software: 
+ *  The Cytobank ACS Library program is free software:
  *  you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -28,12 +28,12 @@ import org.w3c.dom.NodeList;
 /**
  * This is a base class that extends <code>ElementWrapper</code> but also provides the ability to track additional information
  * about the instance.
- * 
+ *
  * @author Chad Rosenberg
  *
  */
 public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
-	/** The <code>AdditionalInfo</code> about this <code>TableOfContents</code>. */
+	/** The <code>AdditionalInfo</code> about this <code>TableOfContents</code> element. */
 	protected Vector<AdditionalInfo> additionalInfos;
 
 	/**
@@ -44,11 +44,11 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 		NodeList additionalInfoNodes = element.getElementsByTagName(Constants.ADDITIONAL_INFO_ELEMENT);
 
 		additionalInfos = new Vector<AdditionalInfo>();
-		
+
 		int numberOfAdditionalInfos = (additionalInfoNodes == null) ? 0 : additionalInfoNodes.getLength();
-		
+
 		additionalInfos = new Vector<AdditionalInfo>(numberOfAdditionalInfos);
-		
+
 		for (int i=0; i<numberOfAdditionalInfos; i++) {
 			Element additionalInfoElement = (Element) additionalInfoNodes.item(i);
 			AdditionalInfo additionalInfo = new AdditionalInfo(additionalInfoElement);
@@ -56,7 +56,7 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 		}
 
 	}
-	
+
 	/**
 	 * Adds an empty additional info to this instance.
 	 * <p>
@@ -65,21 +65,21 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 	 * the ACS container. There may be zero, one or multiple additional_info elements related to each file in ACS. Similarly, there may be zero, one or multiple additional_info
 	 * elements related to the whole ACS container. As long as the Table of Contents remains a valid XML file, the contents of the additional_info element is not restricted by this
 	 * specification. However, the additional_info element shall not be used as replacement for describing associations describable by the associated element.</i>
-	 * 
+	 *
 	 * @return the newly created <code>AdditionalInfo</code>
 	 * @see <a href="http://flowcyt.sourceforge.net/acs/latest.pdf">Archival Cytometry Standard specification</a>
 	 */
 	public AdditionalInfo addAdditionalInfo() {
 		AdditionalInfo additionalInfo = new AdditionalInfo(this);
-		
-		trackAdditionalInfo(additionalInfo);		
+
+		trackAdditionalInfo(additionalInfo);
 		element.appendChild(additionalInfo.element);
-		
+
 		return additionalInfo;
 	}
 
-	
-	
+
+
 	/**
 	 * Adds additional info to this instance.  All <code>String</code> info data will be escaped for XML.  If embedded tags are desired, {@link #addAdditionalInfo()} should be used instead,
 	 * followed up with calls to {@link AdditionalInfo#appendTaggedInfo(String, String)} or {@link AdditionalInfo#appendTaggedInfo(String, Map, String)} against the the newly created <code>AdditionalInfo</code>.
@@ -89,41 +89,41 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 	 * the ACS container. There may be zero, one or multiple additional_info elements related to each file in ACS. Similarly, there may be zero, one or multiple additional_info
 	 * elements related to the whole ACS container. As long as the Table of Contents remains a valid XML file, the contents of the additional_info element is not restricted by this
 	 * specification. However, the additional_info element shall not be used as replacement for describing associations describable by the associated element.</i>
-	 * 
+	 *
 	 * @param info a <code>String</code> of additional info to add to this instance
 	 * @return the newly created <code>AdditionalInfo</code>
 	 * @see <a href="http://flowcyt.sourceforge.net/acs/latest.pdf">Archival Cytometry Standard specification</a>
 	 */
 	public AdditionalInfo addAdditionalInfo(String info) {
 		AdditionalInfo additionalInfo = new AdditionalInfo(this, info);
-		
-		trackAdditionalInfo(additionalInfo);		
+
+		trackAdditionalInfo(additionalInfo);
 		element.appendChild(additionalInfo.element);
-		
+
 		return additionalInfo;
 	}
-	
+
 	/**
 	 * Track an <code>AdditionalInfo</code> against this instance.  This does not add the <code>AdditionalInfo</code> xml to
 	 * the <code>org.w3c.dom.Element</code>, but only to the {@link AdditionalInfoElementWrapper#additionalInfos} <code>Vector<AdditionalInfo></code>.
-	 * 
+	 *
 	 * @param additionalInfo The <code>AdditionalInfo</code> to track
 	 */
 	protected void trackAdditionalInfo(AdditionalInfo additionalInfo) {
 		additionalInfos.add(additionalInfo);
 	}
-	
+
 	/**
 	 * No longer track an <code>AdditionalInfo</code> against this instance.  This does not remove the <code>AdditionalInfo</code> xml from
 	 * the <code>org.w3c.dom.Element</code>, but only from the {@link AdditionalInfoElementWrapper#additionalInfos} <code>Vector<AdditionalInfo></code>.
-	 * 
+	 *
 	 * @param additionalInfo The <code>AdditionalInfo</code> to track
 	 * @return <code>true</code> if the <code>AdditionalInfo</code> instance was successfully removed, <code>false</code> otherwise
 	 */
 	protected boolean untrackAdditionalInfo(AdditionalInfo additionalInfo) {
 		return additionalInfos.remove(additionalInfo);
 	}
-	
+
 	/**
 	 * Gets additional info about this instance.
 	 * <p>
@@ -132,7 +132,7 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 	 * the ACS container. There may be zero, one or multiple additional_info elements related to each file in ACS. Similarly, there may be zero, one or multiple additional_info
 	 * elements related to the whole ACS container. As long as the Table of Contents remains a valid XML file, the contents of the additional_info element is not restricted by this
 	 * specification. However, the additional_info element shall not be used as replacement for describing associations describable by the associated element.</i>
-	 * 
+	 *
 	 * @return an array of <code>AdditionalInfo</code>(s) about this instance
 	 * @see <a href="http://flowcyt.sourceforge.net/acs/latest.pdf">Archival Cytometry Standard specification</a>
 	 */
@@ -141,21 +141,21 @@ public abstract class AdditionalInfoElementWrapper extends ElementWrapper {
 		additionalInfos.toArray(results);
 		return results;
 	}
-	
+
 	/**
 	 * Removes a specific <code>AdditionalInfo</code> instance from this instance.
 	 *
-	 * @param additionalInfo the <code>AdditionalInfo</code> to remove 
+	 * @param additionalInfo the <code>AdditionalInfo</code> to remove
 	 * @return <code>true</code> if the <code>AdditionalInfo</code> instance was successfully removed, <code>false</code> otherwise
 	 */
 	public boolean removeAdditionalInfo(AdditionalInfo additionalInfo) {
 		boolean success = untrackAdditionalInfo(additionalInfo);
-  
+
 	    if (success) {
-			// Remove the additionalInfo from the xml 
+			// Remove the additionalInfo from the xml
 	    	success &= removeElementWrapper(additionalInfo);
 	    }
-	    	
+
 		return success;
 	}
 }

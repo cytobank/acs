@@ -89,6 +89,9 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	/** The list of <code>Association</code>s that this <code>FileResourceIdentifier</code> has. */
 	protected Vector<Association> associations = new Vector<Association>();
 
+    /** The list of <code>AdditionalInformation</code>s that this <code>FileResourceIdentifier</code> has. */
+    protected Vector<AdditionalInfo> additionalInfos = new Vector<AdditionalInfo>();
+
 
 	/**
 	 * Creates a new <code>FileResourceIdentifier</code> instance from an <code>InputStream</code>.  The
@@ -186,7 +189,7 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 				continue;
 
 			Association association = new Association(tableOfContents, (Element) child);
-			addAssoication(association);
+			addAssociation(association);
 		}
 	}
 
@@ -345,7 +348,7 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 */
 	public Association createAssociation(FileResourceIdentifier withFileResourceIdentifier, String relationship) throws InvalidAssociationException, InvalidIndexException, URISyntaxException, InvalidFileResourceUriSchemeException {
 		Association association = new Association(this, withFileResourceIdentifier, relationship);
-		addAssoication(association);
+		addAssociation(association);
 		return association;
 	}
 
@@ -354,10 +357,50 @@ public class FileResourceIdentifier extends AdditionalInfoElementWrapper {
 	 *
 	 * @param association the association to add
 	 */
-	protected void addAssoication(Association association) {
+	protected void addAssociation(Association association) {
 		element.appendChild(association.element);
 		associations.add(association);
 	}
+
+    /**
+     * Creates an <code>AdditionalInfo</code> on this <code>FileResourceIdentifier</code>
+     *
+     * @param string a string of additional information
+     * @return a new <code>AdditionalInfo</code> object
+     * @throws InvalidAssociationException if there is an invalid association
+     * @throws InvalidIndexException If there is a problem with one of the <code>TableOfContents</code>
+     * @see RelationshipTypes
+     */
+    public AdditionalInfo createAdditionalInfo(String info) throws InvalidAssociationException, InvalidIndexException, URISyntaxException, InvalidFileResourceUriSchemeException {
+        AdditionalInfo additionalInfo = new AdditionalInfo(this, info);
+        addAdditionalInfo(additionalInfo);
+        return additionalInfo;
+    }
+    /**
+     * Creates an <code>AdditionalInfo</code> on this <code>FileResourceIdentifier</code>
+     *
+     * @param node A org.w3c.dom.Element representing additional information
+     * @return a new <code>AdditionalInfo</code> object
+     * @throws InvalidAssociationException if there is an invalid association
+     * @throws InvalidIndexException If there is a problem with one of the <code>TableOfContents</code>
+     * @see RelationshipTypes
+     */
+    public AdditionalInfo createAdditionalInfo(Element element) throws InvalidAssociationException, InvalidIndexException, URISyntaxException, InvalidFileResourceUriSchemeException {
+        AdditionalInfo additionalInfo = new AdditionalInfo(this);
+        additionalInfo.appendInfo(element);
+        addAdditionalInfo(additionalInfo);
+        return additionalInfo;
+    }
+
+    /**
+     * Adds an <code>Association</code> to this <code>FileResourceIdentifier</code>.
+     *
+     * @param association the association to add
+     */
+    protected void addAdditionalInfo(AdditionalInfo additionalInfo) {
+        element.appendChild(additionalInfo.element);
+        additionalInfos.add(additionalInfo);
+    }
 
 	/**
 	 * Removes an <code>Association</code> from this <code>FileResourceIdentifier</code>.

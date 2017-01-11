@@ -339,9 +339,11 @@ public class ACS {
             IOUtils.copy(inputStream, outputStream);
         } finally {
             try {
-                inputStream.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                }
             } catch (IOException ignore) {}
-            
+
             try {
                 zipFile.close();
             } catch (IOException ignore) {}

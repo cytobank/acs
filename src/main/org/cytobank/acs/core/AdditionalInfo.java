@@ -245,7 +245,7 @@ public class AdditionalInfo extends ElementWrapper {
 	 * return a <code>String</code> with all the <code>AdditionalInfo</code> contained within this instance
 	 */	
 	public String toString() {
-		String result = null;
+		String result = "";
 
 		try {
 			StringBuffer stringBuffer = new StringBuffer();
@@ -261,5 +261,5 @@ public class AdditionalInfo extends ElementWrapper {
 		}
 		return result;
 	}
-	
+
 }
